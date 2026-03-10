@@ -45,6 +45,8 @@ public class ChessPieceVisual : MonoBehaviour {
         canvas = piece.GetComponentInParent<Canvas>();
         fixedZ = transform.position.z;
 
+        ChessPiecesVisualManager.Instance.SetCanvas(canvas);
+
         parentPiece.PointerEnterEvent.AddListener(PointerEnter);
         parentPiece.PointerExitEvent.AddListener(PointerExit);
         parentPiece.BeginDragEvent.AddListener(BeginDrag);
@@ -61,7 +63,7 @@ public class ChessPieceVisual : MonoBehaviour {
     }
 
     private void SmoothFollow() {
-        Vector3 targetWorldPos = UIToWorldPosition(pieceTransform.position);
+        Vector3 targetWorldPos = ChessPiecesVisualManager.Instance.UIToWorldPosition(pieceTransform.position, fixedZ);
         targetWorldPos.z = parentPiece.isDragging ? fixedZ + dragZOffset : fixedZ;
         transform.position = Vector3.Lerp(transform.position, targetWorldPos, followSpeed * Time.deltaTime);
     }
@@ -82,12 +84,10 @@ public class ChessPieceVisual : MonoBehaviour {
     }
 
     private void PieceTilt() {
-        // stop wobble when dragging
         float sine = parentPiece.isDragging ? 0 : Mathf.Sin(Time.time) * (parentPiece.isHovering ? .2f : 1);
         float cosine = parentPiece.isDragging ? 0 : Mathf.Cos(Time.time) * (parentPiece.isHovering ? .2f : 1);
 
-        Vector2 mouseScreenPos = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mouseScreenPos.x, mouseScreenPos.y, 0));
+        Vector3 mouseWorldPos = ChessPiecesVisualManager.Instance.MouseWorldPos;
         mouseWorldPos.z = fixedZ;
 
         Vector3 offset = transform.position - mouseWorldPos;

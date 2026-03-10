@@ -38,7 +38,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         Color c = imageComponent.color;
         c.a = 0f;
         imageComponent.color = c;
+    }
 
+    protected void Start() {
         if (chessPieceVisual != null)
             chessPieceVisual.Initialize(this);
     }
