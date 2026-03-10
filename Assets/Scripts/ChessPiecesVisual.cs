@@ -19,10 +19,10 @@ public class ChessPieceVisual : MonoBehaviour {
     [SerializeField] private float followSpeed = 30;
 
     [Header("Rotation Parameters")]
-    [SerializeField] private float rotationAmount = 20;
+    [SerializeField] private float rotationAmount = 12;
     [SerializeField] private float rotationSpeed = 20;
-    [SerializeField] private float manualTiltAmount = 20;
-    [SerializeField] private float autoTiltAmount = 30;
+    [SerializeField] private float manualTiltAmount = 25;
+    [SerializeField] private float autoTiltAmount = 20;
     [SerializeField] private float tiltSpeed = 20;
 
     [Header("Scale Parameters")]
@@ -36,7 +36,7 @@ public class ChessPieceVisual : MonoBehaviour {
     [SerializeField] private float hoverPunchAngle = 5;
     [SerializeField] private float hoverTransition = .15f;
 
-
+    [SerializeField] private float dragZOffset = -1f;
     float fixedZ;
 
     public void Initialize(ChessPieces piece) {
@@ -62,8 +62,7 @@ public class ChessPieceVisual : MonoBehaviour {
 
     private void SmoothFollow() {
         Vector3 targetWorldPos = UIToWorldPosition(pieceTransform.position);
-        targetWorldPos.z = fixedZ;
-
+        targetWorldPos.z = parentPiece.isDragging ? fixedZ + dragZOffset : fixedZ;
         transform.position = Vector3.Lerp(transform.position, targetWorldPos, followSpeed * Time.deltaTime);
     }
 
