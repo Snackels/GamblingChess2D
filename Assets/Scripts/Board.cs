@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour {
     public GameObject mCellPrefab;
     public Cell[,] mAllCells = new Cell[5, 5];
-
     private float cellSize;
 
     public void Create() {
@@ -18,12 +17,10 @@ public class Board : MonoBehaviour {
             for (int x = 0; x < 5; x++) {
                 GameObject newCell = Instantiate(mCellPrefab, transform);
                 RectTransform rectTransform = newCell.GetComponent<RectTransform>();
-
                 rectTransform.anchoredPosition = new Vector2(
                     startX + (x * cellSize),
                     startY + (y * cellSize)
                 );
-
                 mAllCells[x, y] = newCell.GetComponent<Cell>();
                 mAllCells[x, y].Setup(new Vector2Int(x, y), this);
 
@@ -32,5 +29,10 @@ public class Board : MonoBehaviour {
                     newCell.GetComponent<Image>().color = new Color32(230, 220, 187, 255);
             }
         }
+    }
+
+    public Cell GetCell(int x, int y) {
+        if (x < 0 || x >= 5 || y < 0 || y >= 5) return null;
+        return mAllCells[x, y];
     }
 }

@@ -34,6 +34,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     protected RectTransform mRectTransform = null;
     protected Vector3Int mMovement = Vector3Int.one;
     protected List<Cell> mHighlightedCells = new List<Cell>();
+    private List<Cell> mCurrentThreats = new List<Cell>();
 
     protected void ShowCells() {
         foreach (Cell cell in mHighlightedCells)
@@ -44,6 +45,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         foreach (Cell cell in mHighlightedCells)
             cell.mOutlineImage.enabled = false;
         mHighlightedCells.Clear();
+    }
+
+    public virtual List<Cell> GetThreatenedCells() {
+        return new List<Cell>();
     }
 
     public virtual void Place(Cell newCell) {
@@ -64,6 +69,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         transform.localPosition = new Vector3(canvasPos.x, canvasPos.y, 0);
         originalPosition = transform.localPosition;
         gameObject.SetActive(true);
+
+        mCurrentThreats = GetThreatenedCells();
+        ThreatManager.Instance.RegisterThreats(this, mCurrentThreats);
     }
 
     protected virtual void Move() {
@@ -75,7 +83,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         mTargetCell = null;
     }
 
-    protected void Awake() {
+    protected virtual void Awake() {
         canvas = GetComponentInParent<Canvas>();
         imageComponent = GetComponent<Image>();
         originalPosition = transform.localPosition;
@@ -85,7 +93,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     protected void Start() {
-        if (chessPieceVisual != null && !chessPieceVisual.IsInitialized)
+        if (chessPieceVisual != null)
             chessPieceVisual.Initialize(this);
     }
 
@@ -116,6 +124,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
+        ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
+        mCurrentThreats.Clear();
+
         BeginDragEvent.Invoke(this);
         Vector2 mouseCanvasPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -142,8 +153,13 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         if (mTargetCell != null)
             Place(mTargetCell);
-        else
+        else {
             transform.localPosition = originalPosition;
+            if (mCurrentCell != null) {
+                mCurrentThreats = GetThreatenedCells();
+                ThreatManager.Instance.RegisterThreats(this, mCurrentThreats);
+            }
+        }
 
         mTargetCell = null;
         ClearCells();

@@ -149,4 +149,4 @@ MonoBehaviour:
       m_Calls: []
   mCurrentCell: {fileID: 0}
   mTargetCell: {fileID: 0}
-  pawnVisual: {fileID: 0}
+  pawnVisual: {fileID: 964222407886526020, guid: 9439b6853ae501849a3f4e93e08cd04f, type: 3}
