@@ -375,6 +375,8 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  mCurrentCell: {fileID: 0}
+  mTargetCell: {fileID: 0}
   bishopVisual: {fileID: 180891264}
 --- !u!1 &180891263
 GameObject:
@@ -1221,6 +1223,8 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  mCurrentCell: {fileID: 0}
+  mTargetCell: {fileID: 0}
   queenVisual: {fileID: 1733015631}
 --- !u!1 &952257260
 GameObject:
@@ -1369,6 +1373,8 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  mCurrentCell: {fileID: 0}
+  mTargetCell: {fileID: 0}
   pawnVisual: {fileID: 1926310299}
 --- !u!1 &966053420
 GameObject:
@@ -1718,6 +1724,8 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  mCurrentCell: {fileID: 0}
+  mTargetCell: {fileID: 0}
   rookVisual: {fileID: 1691803717}
 --- !u!114 &1698277201
 MonoBehaviour:
@@ -2078,6 +2086,8 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  mCurrentCell: {fileID: 0}
+  mTargetCell: {fileID: 0}
   knightVisual: {fileID: 1881061878}
 --- !u!114 &1911355896
 MonoBehaviour:

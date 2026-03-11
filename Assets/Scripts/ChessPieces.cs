@@ -29,12 +29,56 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [HideInInspector] public UnityEvent<ChessPieces> EndDragEvent;
 
     private Vector3 originalPosition;
+    public Cell mCurrentCell = null;
+    public Cell mTargetCell = null;
+    protected RectTransform mRectTransform = null;
+    protected Vector3Int mMovement = Vector3Int.one;
+    protected List<Cell> mHighlightedCells = new List<Cell>();
+
+    protected void ShowCells() {
+        foreach (Cell cell in mHighlightedCells)
+            cell.mOutlineImage.enabled = true;
+    }
+
+    protected void ClearCells() {
+        foreach (Cell cell in mHighlightedCells)
+            cell.mOutlineImage.enabled = false;
+        mHighlightedCells.Clear();
+    }
+
+    public virtual void Place(Cell newCell) {
+        if (mCurrentCell != null)
+            mCurrentCell.mCurrentPiece = null;
+
+        mCurrentCell = newCell;
+        mCurrentCell.mCurrentPiece = this;
+
+        Vector2 canvasPos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.transform as RectTransform,
+            RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, newCell.transform.position),
+            canvas.worldCamera,
+            out canvasPos
+        );
+
+        transform.localPosition = new Vector3(canvasPos.x, canvasPos.y, 0);
+        originalPosition = transform.localPosition;
+        gameObject.SetActive(true);
+    }
+
+    protected virtual void Move() {
+        mCurrentCell.mCurrentPiece = null;
+        mCurrentCell = mTargetCell;
+        mCurrentCell.mCurrentPiece = this;
+        transform.localPosition = mCurrentCell.mRectTransform.anchoredPosition;
+        originalPosition = transform.localPosition;
+        mTargetCell = null;
+    }
 
     protected void Awake() {
         canvas = GetComponentInParent<Canvas>();
         imageComponent = GetComponent<Image>();
         originalPosition = transform.localPosition;
-
         Color c = imageComponent.color;
         c.a = 0f;
         imageComponent.color = c;
@@ -82,7 +126,6 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         );
         offset = mouseCanvasPos - (Vector2)transform.localPosition;
         isDragging = true;
-        canvas.GetComponent<GraphicRaycaster>().enabled = false;
         imageComponent.raycastTarget = false;
         wasDragged = true;
     }
@@ -92,9 +135,19 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public void OnEndDrag(PointerEventData eventData) {
         EndDragEvent.Invoke(this);
         isDragging = false;
-        canvas.GetComponent<GraphicRaycaster>().enabled = true;
         imageComponent.raycastTarget = true;
-        transform.localPosition = originalPosition;
+
+        if (mTargetCell != null)
+            mTargetCell.mOutlineImage.enabled = false;
+
+        if (mTargetCell != null)
+            Place(mTargetCell);
+        else
+            transform.localPosition = originalPosition;
+
+        mTargetCell = null;
+        ClearCells();
+
         StartCoroutine(FrameWait());
         IEnumerator FrameWait() {
             yield return new WaitForEndOfFrame();
