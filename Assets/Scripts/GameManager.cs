@@ -1,7 +1,9 @@
 using UnityEngine;
 using DG.Tweening;
+using System.Collections;
 
 public class GameManager : MonoBehaviour {
+    [SerializeField] private SpawnPoint[] spawnPoints;
     public Board mBoard;
     void Awake() {
         DOTween.Init(recycleAllByDefault: true, useSafeMode: true)
@@ -10,5 +12,12 @@ public class GameManager : MonoBehaviour {
 
     void Start() {
         mBoard.Create();
+        StartCoroutine(SpawnAllPieces());
+    }
+
+    IEnumerator SpawnAllPieces() {
+        yield return new WaitForEndOfFrame();
+        foreach (SpawnPoint sp in spawnPoints)
+            sp.SpawnPiece();
     }
 }

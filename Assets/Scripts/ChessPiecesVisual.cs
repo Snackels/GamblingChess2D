@@ -39,6 +39,8 @@ public class ChessPieceVisual : MonoBehaviour {
     [SerializeField] private float dragZOffset = -1f;
     float fixedZ;
 
+    public bool IsInitialized => initialized;
+
     public void Initialize(ChessPieces piece) {
         parentPiece = piece;
         pieceTransform = piece.transform;

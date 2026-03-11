@@ -85,7 +85,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     protected void Start() {
-        if (chessPieceVisual != null)
+        if (chessPieceVisual != null && !chessPieceVisual.IsInitialized)
             chessPieceVisual.Initialize(this);
     }
 
