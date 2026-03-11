@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour {
     public GameObject mCellPrefab;
     public Cell[,] mAllCells = new Cell[5, 5];
+    [SerializeField] private Canvas overlayCanvas;
     private float cellSize;
 
     public void Create() {
@@ -22,7 +23,7 @@ public class Board : MonoBehaviour {
                     startY + (y * cellSize)
                 );
                 mAllCells[x, y] = newCell.GetComponent<Cell>();
-                mAllCells[x, y].Setup(new Vector2Int(x, y), this);
+                mAllCells[x, y].Setup(new Vector2Int(x, y), this, overlayCanvas);
 
                 bool isLight = (x + y) % 2 == 0;
                 if (isLight)

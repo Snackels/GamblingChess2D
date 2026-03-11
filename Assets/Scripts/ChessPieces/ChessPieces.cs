@@ -35,6 +35,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     protected Vector3Int mMovement = Vector3Int.one;
     protected List<Cell> mHighlightedCells = new List<Cell>();
     private List<Cell> mCurrentThreats = new List<Cell>();
+    public List<Cell> GetCurrentThreats() => mCurrentThreats;
+    public void SetCurrentThreats(List<Cell> threats) => mCurrentThreats = threats;
 
     protected void ShowCells() {
         foreach (Cell cell in mHighlightedCells)
@@ -70,6 +72,11 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         originalPosition = transform.localPosition;
         gameObject.SetActive(true);
 
+        ThreatManager.Instance.RecalculateAllThreats();
+    }
+
+    public void RecalculateThreats() {
+        ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
         mCurrentThreats = GetThreatenedCells();
         ThreatManager.Instance.RegisterThreats(this, mCurrentThreats);
     }
@@ -124,8 +131,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
-        ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
-        mCurrentThreats.Clear();
+        if (mCurrentCell != null) {
+            ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
+            mCurrentThreats.Clear();
+            mCurrentCell.mCurrentPiece = null;
+            ThreatManager.Instance.RecalculateAllThreats();
+        }
 
         BeginDragEvent.Invoke(this);
         Vector2 mouseCanvasPos;
@@ -154,11 +165,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (mTargetCell != null)
             Place(mTargetCell);
         else {
+            if (mCurrentCell != null)
+                mCurrentCell.mCurrentPiece = this;
             transform.localPosition = originalPosition;
-            if (mCurrentCell != null) {
-                mCurrentThreats = GetThreatenedCells();
-                ThreatManager.Instance.RegisterThreats(this, mCurrentThreats);
-            }
+            ThreatManager.Instance.RecalculateAllThreats();
         }
 
         mTargetCell = null;

@@ -14,11 +14,31 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
     [HideInInspector] public ChessPieces mCurrentPiece = null;
     [HideInInspector] public int mThreatCount = 0;
 
-    public void Setup(Vector2Int newBoardPosition, Board newBoard) {
+    private Canvas overlayCanvas;
+
+    public void Setup(Vector2Int newBoardPosition, Board newBoard, Canvas overlay) {
         mBoardPosition = newBoardPosition;
         mBoard = newBoard;
         mRectTransform = GetComponent<RectTransform>();
+        overlayCanvas = overlay;
+
+        mThreatText.transform.SetParent(overlayCanvas.transform, false);
         UpdateThreatDisplay();
+    }
+
+    void Update() {
+        if (mThreatText != null && mThreatCount > 0) {
+            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(
+                Camera.main, transform.position
+            );
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                overlayCanvas.transform as RectTransform,
+                screenPos,
+                null,
+                out Vector2 localPos
+            );
+            mThreatText.rectTransform.localPosition = localPos;
+        }
     }
 
     public void AddThreat() {
@@ -67,5 +87,10 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
         ChessPieces piece = eventData.pointerDrag?.GetComponent<ChessPieces>();
         if (piece == null) return;
         mOutlineImage.enabled = false;
+    }
+
+    private void OnDestroy() {
+        if (mThreatText != null)
+            Destroy(mThreatText.gameObject);
     }
 }
