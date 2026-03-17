@@ -5,8 +5,9 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using DG.Tweening;
 
-public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler {
+public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, IPointerDownHandler {
     protected Canvas canvas;
     protected Image imageComponent;
     protected Vector3 offset;
@@ -28,6 +29,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [HideInInspector] public UnityEvent<ChessPieces> BeginDragEvent;
     [HideInInspector] public UnityEvent<ChessPieces> EndDragEvent;
 
+    [HideInInspector] public System.Action OnPieceSold;
+
     private Vector3 originalPosition;
     public Cell mCurrentCell = null;
     public Cell mTargetCell = null;
@@ -37,6 +40,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     private List<Cell> mCurrentThreats = new List<Cell>();
     public List<Cell> GetCurrentThreats() => mCurrentThreats;
     public void SetCurrentThreats(List<Cell> threats) => mCurrentThreats = threats;
+
+    private bool isHolding = false;
+    private float holdTime = 0f;
+    [SerializeField] private float requiredHoldTime = 0.75f;
 
     protected void ShowCells() {
         foreach (Cell cell in mHighlightedCells)
@@ -100,7 +107,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     protected void Start() {
-        if (chessPieceVisual != null)
+        if (chessPieceVisual != null && !chessPieceVisual.IsInitialized)
             chessPieceVisual.Initialize(this);
     }
 
@@ -120,6 +127,52 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
                 moveSpeedLimit * Time.deltaTime
             );
         }
+
+        if (isHolding) {
+            holdTime += Time.deltaTime;
+            float t = holdTime / requiredHoldTime;
+
+            if (chessPieceVisual != null)
+                chessPieceVisual.UpdateHoldVisual(t);
+
+            if (holdTime >= requiredHoldTime) {
+                isHolding = false;
+                if (mCurrentCell != null && chessPieceVisual != null)
+                    chessPieceVisual.PlayDeleteAnimation(RemovePiece);
+                else if (mCurrentCell != null)
+                    RemovePiece();
+            }
+        }
+    }
+
+    public void RemovePiece() {
+        if (mCurrentCell != null) {
+            mCurrentCell.mCurrentPiece = null;
+            mCurrentCell = null;
+        }
+
+        ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
+        mCurrentThreats.Clear();
+
+        ClearCells();
+
+        ThreatManager.Instance.RecalculateAllThreats();
+
+        OnPieceSold?.Invoke();
+
+        if (chessPieceVisual != null)
+            Destroy(chessPieceVisual.gameObject);
+
+        Destroy(gameObject);
+    }
+
+    void CancelHold() {
+        if (!isHolding) return;
+        isHolding = false;
+        holdTime = 0f;
+
+        if (chessPieceVisual != null)
+            chessPieceVisual.ResetVisual();
     }
 
     void ClampPosition() {
@@ -131,6 +184,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public void OnBeginDrag(PointerEventData eventData) {
+        CancelHold();
+
         if (mCurrentCell != null) {
             ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
             mCurrentThreats.Clear();
@@ -189,5 +244,16 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public void OnPointerExit(PointerEventData eventData) {
         PointerExitEvent.Invoke(this);
         isHovering = false;
+        CancelHold();
+    }
+
+    public void OnPointerDown(PointerEventData eventData) {
+        if (mCurrentCell == null) return;
+        isHolding = true;
+        holdTime = 0f;
+    }
+
+    public void OnPointerUp(PointerEventData eventData) {
+        CancelHold();
     }
 }

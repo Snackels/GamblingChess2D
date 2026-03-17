@@ -149,4 +149,4 @@ MonoBehaviour:
       m_Calls: []
   mCurrentCell: {fileID: 0}
   mTargetCell: {fileID: 0}
-  bishopVisual: {fileID: 0}
+  requiredHoldTime: 0.75

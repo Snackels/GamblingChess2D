@@ -2,10 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class Rook : ChessPieces {
-    [SerializeField] private ChessPieceVisual rookVisual;
 
     protected override void Awake() {
-        chessPieceVisual = rookVisual;
         base.Awake();
     }
 

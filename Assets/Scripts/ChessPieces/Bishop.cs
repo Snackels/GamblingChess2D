@@ -2,10 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class Bishop : ChessPieces {
-    [SerializeField] private ChessPieceVisual bishopVisual;
 
     protected new void Awake() {
-        chessPieceVisual = bishopVisual;
         base.Awake();
     }
 
