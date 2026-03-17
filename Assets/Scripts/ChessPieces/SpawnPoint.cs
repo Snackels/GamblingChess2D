@@ -1,17 +1,19 @@
 using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour {
-    [SerializeField] private GameObject piecePrefab;
-    [SerializeField] private GameObject visualPrefab;
-    [SerializeField] private Transform visualParent;
+    [SerializeField] GameObject piecePrefab;
+    [SerializeField] GameObject visualPrefab;
+    [SerializeField] Transform visualParent;
 
-    // ✅ track the active piece this spawn point owns
-    private ChessPieces activePiece = null;
+    ChessPieces activePiece = null;
+    ChessPieces waitingPiece = null;
 
     public void SpawnPiece() {
         if (piecePrefab == null) return;
-        // ✅ don't spawn if piece already exists
-        if (activePiece != null) return;
+        if (waitingPiece != null) return;
+
+        int spawnTurn = TurnManager.Instance.currentTurn;
+        Debug.Log($"SpawnPiece called, spawnTurn={spawnTurn}");
 
         GameObject newPiece = Instantiate(piecePrefab, transform.parent);
         newPiece.GetComponent<RectTransform>().anchoredPosition =
@@ -26,28 +28,37 @@ public class SpawnPoint : MonoBehaviour {
             visual.Initialize(piece);
         }
 
-        // ✅ register piece with this spawn point
+        waitingPiece = piece;
+
+        ChessPieces capturedWaiting = piece;
+        capturedWaiting.OnPiecePlaced = (placedPiece) => OnWaitingPiecePlaced(capturedWaiting, spawnTurn);
+        capturedWaiting.OnPieceSold = (soldPiece) => OnPieceSold(soldPiece, spawnTurn);
+    }
+
+    void OnWaitingPiecePlaced(ChessPieces piece, int spawnTurn) {
+        if (piece != waitingPiece) return;
         activePiece = piece;
-        activePiece.OnPieceSold = OnPieceSold;
+        waitingPiece = null;
+        piece.OnPiecePlaced = null;
+        Debug.Log($"Piece placed, spawnTurn={spawnTurn}");
     }
 
-    // ✅ called when piece is sold
-    // TODO: add turn check here when turn system is implemented
-    // e.g. if (TurnManager.Instance.WasPlacedThisTurn(activePiece)) RespawnPiece();
+    void OnPieceSold(ChessPieces soldPiece, int spawnTurn) {
+        bool wasWaiting = soldPiece == waitingPiece;
+        bool wasActive = soldPiece == activePiece;
 
-    private void OnPieceSold() {
-        activePiece = null;
+        if (wasWaiting) waitingPiece = null;
+        if (wasActive) activePiece = null;
 
-        // TODO: plug turn check in here
-        // if (TurnManager.Instance.WasPlacedThisTurn(activePiece))
-        //     RespawnPiece();
-        // else
-        //     return; // no respawn, piece is gone permanently
+        Debug.Log($"Piece sold. wasWaiting={wasWaiting}, spawnTurn={spawnTurn}, currentTurn={TurnManager.Instance.currentTurn}");
 
-        RespawnPiece(); // for now always respawn
-    }
+        if (wasWaiting) {
+            SpawnPiece();
+            return;
+        }
 
-    private void RespawnPiece() {
-        SpawnPiece();
+        if (wasActive && spawnTurn == TurnManager.Instance.currentTurn) {
+            SpawnPiece();
+        }
     }
 }

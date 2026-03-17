@@ -13,7 +13,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     protected Vector3 offset;
 
     [Header("Movement")]
-    [SerializeField] private float moveSpeedLimit = 50;
+    [SerializeField] float moveSpeedLimit = 50;
 
     [Header("States")]
     public bool isHovering;
@@ -29,21 +29,22 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [HideInInspector] public UnityEvent<ChessPieces> BeginDragEvent;
     [HideInInspector] public UnityEvent<ChessPieces> EndDragEvent;
 
-    [HideInInspector] public System.Action OnPieceSold;
+    [HideInInspector] public System.Action<ChessPieces> OnPieceSold;
+    [HideInInspector] public System.Action<ChessPieces> OnPiecePlaced;
 
-    private Vector3 originalPosition;
+    Vector3 originalPosition;
     public Cell mCurrentCell = null;
     public Cell mTargetCell = null;
     protected RectTransform mRectTransform = null;
     protected Vector3Int mMovement = Vector3Int.one;
     protected List<Cell> mHighlightedCells = new List<Cell>();
-    private List<Cell> mCurrentThreats = new List<Cell>();
+    List<Cell> mCurrentThreats = new List<Cell>();
     public List<Cell> GetCurrentThreats() => mCurrentThreats;
     public void SetCurrentThreats(List<Cell> threats) => mCurrentThreats = threats;
 
-    private bool isHolding = false;
-    private float holdTime = 0f;
-    [SerializeField] private float requiredHoldTime = 0.75f;
+    bool isHolding = false;
+    float holdTime = 0f;
+    [SerializeField] float requiredHoldTime = 0.75f;
 
     protected void ShowCells() {
         foreach (Cell cell in mHighlightedCells)
@@ -78,6 +79,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         transform.localPosition = new Vector3(canvasPos.x, canvasPos.y, 0);
         originalPosition = transform.localPosition;
         gameObject.SetActive(true);
+
+        OnPiecePlaced?.Invoke(this);
 
         ThreatManager.Instance.RecalculateAllThreats();
     }
@@ -153,12 +156,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
         mCurrentThreats.Clear();
-
         ClearCells();
-
         ThreatManager.Instance.RecalculateAllThreats();
 
-        OnPieceSold?.Invoke();
+        OnPieceSold?.Invoke(this);
 
         if (chessPieceVisual != null)
             Destroy(chessPieceVisual.gameObject);
