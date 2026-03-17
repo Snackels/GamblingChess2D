@@ -14,6 +14,5 @@ public class TurnManager : MonoBehaviour {
             sp.SpawnPiece();
 
         currentTurn++;
-        Debug.Log($"Turn {currentTurn} started");
     }
 }

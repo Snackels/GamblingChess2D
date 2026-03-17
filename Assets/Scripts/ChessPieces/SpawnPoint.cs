@@ -13,7 +13,6 @@ public class SpawnPoint : MonoBehaviour {
         if (waitingPiece != null) return;
 
         int spawnTurn = TurnManager.Instance.currentTurn;
-        Debug.Log($"SpawnPiece called, spawnTurn={spawnTurn}");
 
         GameObject newPiece = Instantiate(piecePrefab, transform.parent);
         newPiece.GetComponent<RectTransform>().anchoredPosition =
@@ -40,7 +39,6 @@ public class SpawnPoint : MonoBehaviour {
         activePiece = piece;
         waitingPiece = null;
         piece.OnPiecePlaced = null;
-        Debug.Log($"Piece placed, spawnTurn={spawnTurn}");
     }
 
     void OnPieceSold(ChessPieces soldPiece, int spawnTurn) {
@@ -50,7 +48,6 @@ public class SpawnPoint : MonoBehaviour {
         if (wasWaiting) waitingPiece = null;
         if (wasActive) activePiece = null;
 
-        Debug.Log($"Piece sold. wasWaiting={wasWaiting}, spawnTurn={spawnTurn}, currentTurn={TurnManager.Instance.currentTurn}");
 
         if (wasWaiting) {
             SpawnPiece();
