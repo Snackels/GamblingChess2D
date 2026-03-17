@@ -32,6 +32,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [HideInInspector] public System.Action<ChessPieces> OnPieceSold;
     [HideInInspector] public System.Action<ChessPieces> OnPiecePlaced;
 
+    [HideInInspector] public int spawnTurn = -1;
+
     Vector3 originalPosition;
     public Cell mCurrentCell = null;
     public Cell mTargetCell = null;
@@ -80,8 +82,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         originalPosition = transform.localPosition;
         gameObject.SetActive(true);
 
-        OnPiecePlaced?.Invoke(this);
+        if (spawnTurn == -1)
+            spawnTurn = TurnManager.Instance.currentTurn;
 
+        OnPiecePlaced?.Invoke(this);
         ThreatManager.Instance.RecalculateAllThreats();
     }
 
