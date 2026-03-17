@@ -114,8 +114,8 @@ public class ChessPieceVisual : MonoBehaviour {
         deleteSequence = DOTween.Sequence();
 
         deleteSequence
-            .Append(transform.DOShakeScale(0.3f, 0.2f, 10, 90, false))
-            .Append(transform.DOScale(1.2f, 0.2f).SetEase(Ease.OutBack))
+            .Append(transform.DOShakeScale(0.2f, 0.5f, 10, 90, false))
+            .Append(transform.DOScale(1.5f, 0.2f).SetEase(Ease.OutBack))
             .Append(transform.DOScale(0f, 0.25f).SetEase(Ease.InBack))
             .OnComplete(() => {
                 onComplete?.Invoke();
