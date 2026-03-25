@@ -9,10 +9,22 @@ public class TurnManager : MonoBehaviour {
     }
 
     public void EndTurn() {
+        ChessPieces[] allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
+        foreach (ChessPieces piece in allPieces) {
+            if (piece.mCurrentCell != null && piece.mustMove)
+                piece.Penalty();
+        }
+
         SpawnPoint[] spawnPoints = FindObjectsByType<SpawnPoint>(FindObjectsSortMode.None);
         foreach (SpawnPoint sp in spawnPoints)
             sp.SpawnPiece();
 
         currentTurn++;
+
+        allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
+        foreach (ChessPieces piece in allPieces) {
+            if (piece.mCurrentCell != null)
+                piece.SetMustMove(true);
+        }
     }
 }

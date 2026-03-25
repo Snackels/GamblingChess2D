@@ -12,6 +12,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     protected Image imageComponent;
     protected Vector3 offset;
 
+    [Header("References")]
+    [SerializeField] Image mustMoveIcon;
+
     [Header("Movement")]
     [SerializeField] float moveSpeedLimit = 50;
 
@@ -33,8 +36,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [HideInInspector] public System.Action<ChessPieces> OnPiecePlaced;
 
     [HideInInspector] public int spawnTurn = -1;
+    [HideInInspector] public bool mustMove = false;
 
     Vector3 originalPosition;
+    Cell cellAtTurnStart = null;
     public Cell mCurrentCell = null;
     public Cell mTargetCell = null;
     protected RectTransform mRectTransform = null;
@@ -87,6 +92,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         OnPiecePlaced?.Invoke(this);
         ThreatManager.Instance.RecalculateAllThreats();
+        if (mustMove && mCurrentCell != cellAtTurnStart)
+            SetMustMove(false);
     }
 
     public void RecalculateThreats() {
@@ -158,6 +165,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             mCurrentCell = null;
         }
 
+        mustMove = false;
+        cellAtTurnStart = null;
         ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
         mCurrentThreats.Clear();
         ClearCells();
@@ -178,6 +187,18 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         if (chessPieceVisual != null)
             chessPieceVisual.ResetVisual();
+    }
+
+    public void SetMustMove(bool value) {
+        mustMove = value;
+        if (mustMove)
+            cellAtTurnStart = mCurrentCell;
+        if (mustMoveIcon != null)
+            mustMoveIcon.enabled = mustMove;
+    }
+
+    public virtual void Penalty() {
+        // Blank for now — will be implemented later.
     }
 
     void ClampPosition() {
