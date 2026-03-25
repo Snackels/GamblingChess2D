@@ -24,10 +24,6 @@ public class Board : MonoBehaviour {
                 );
                 mAllCells[x, y] = newCell.GetComponent<Cell>();
                 mAllCells[x, y].Setup(new Vector2Int(x, y), this, overlayCanvas);
-
-                bool isLight = (x + y) % 2 == 0;
-                if (isLight)
-                    newCell.GetComponent<Image>().color = new Color32(230, 220, 187, 255);
             }
         }
     }
