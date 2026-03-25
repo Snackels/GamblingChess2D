@@ -736,6 +736,7 @@ MonoBehaviour:
   - {fileID: 1907063268}
   - {fileID: 1942976798}
   mBoard: {fileID: 2045810799}
+  maxPiecesOnBoard: 3
 --- !u!114 &966053422
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -55,6 +55,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [SerializeField] float requiredHoldTime = 0.75f;
 
     bool dragAllowed = false;
+    bool wasUnplacedOnDragStart = false;
 
     protected void ShowCells() {
         foreach (Cell cell in mHighlightedCells) {
@@ -84,6 +85,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public virtual void Place(Cell newCell) {
+
         Cell previousCell = mCurrentCell;
         if (mCurrentCell != null)
             mCurrentCell.mCurrentPiece = null;
@@ -244,6 +246,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (!CanDrag()) return;
         dragAllowed = true;
 
+        wasUnplacedOnDragStart = (mCurrentCell == null);
+
         if (mCurrentCell != null) {
             ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
             mCurrentThreats.Clear();
@@ -286,6 +290,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             mTargetCell = null;
 
         if (mTargetCell != null && !IsValidPlacement(mTargetCell))
+            mTargetCell = null;
+
+        if (wasUnplacedOnDragStart && mTargetCell != null && GameManager.Instance.IsBoardFull())
             mTargetCell = null;
 
         if (mTargetCell != null) { Place(mTargetCell); }
