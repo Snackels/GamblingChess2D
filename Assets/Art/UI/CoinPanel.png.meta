@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 6ca41f9d6dcc5774f8ea43dd4a293f39
+guid: d5b1f2cd39a22d04d85c5cc48f46b942
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6623963105415861948
-    second: ChessPieces_0
+      213: -8823374035470802908
+    second: CoinPanel_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChessPieces_0
+      name: CoinPanel_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 256
-        height: 1
+        x: 13
+        y: 22
+        width: 167
+        height: 221
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cb61b9f595b0deb50800000000000000
-      internalID: 6623963105415861948
+      spriteID: 420ab5f10141d8580800000000000000
+      internalID: -8823374035470802908
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ChessPieces_0: 6623963105415861948
+      CoinPanel_0: -8823374035470802908
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
