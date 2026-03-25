@@ -4,8 +4,8 @@ using UnityEngine.UI;
 public class Board : MonoBehaviour {
     public GameObject mCellPrefab;
     public Cell[,] mAllCells = new Cell[5, 5];
-    [SerializeField] private Canvas overlayCanvas;
-    private float cellSize;
+    [SerializeField] Canvas overlayCanvas;
+    float cellSize;
 
     public void Create() {
         cellSize = mCellPrefab.GetComponent<RectTransform>().sizeDelta.x;

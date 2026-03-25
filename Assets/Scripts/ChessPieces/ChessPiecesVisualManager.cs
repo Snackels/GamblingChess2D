@@ -4,8 +4,8 @@ public class ChessPiecesVisualManager : MonoBehaviour {
     public static ChessPiecesVisualManager Instance;
 
     public Vector3 MouseWorldPos { get; private set; }
-    private Camera mainCamera;
-    private Canvas canvas;
+    Camera mainCamera;
+    Canvas canvas;
 
     void Awake() {
         Instance = this;

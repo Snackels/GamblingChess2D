@@ -14,7 +14,7 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
     [HideInInspector] public ChessPieces mCurrentPiece = null;
     [HideInInspector] public int mThreatCount = 0;
 
-    private Canvas overlayCanvas;
+    Canvas overlayCanvas;
 
     public void Setup(Vector2Int newBoardPosition, Board newBoard, Canvas overlay) {
         mBoardPosition = newBoardPosition;
@@ -89,7 +89,7 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
         mOutlineImage.enabled = false;
     }
 
-    private void OnDestroy() {
+    void OnDestroy() {
         if (mThreatText != null)
             Destroy(mThreatText.gameObject);
     }

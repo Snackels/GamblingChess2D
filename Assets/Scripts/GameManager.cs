@@ -3,7 +3,7 @@ using DG.Tweening;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
-    [SerializeField] private SpawnPoint[] spawnPoints;
+    [SerializeField] SpawnPoint[] spawnPoints;
     public Board mBoard;
     void Awake() {
         DOTween.Init(recycleAllByDefault: true, useSafeMode: true)
