@@ -75,6 +75,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         return new List<Cell>();
     }
 
+    public virtual bool IsValidPlacement(Cell cell) {
+        return true;
+    }
+
     public virtual List<Cell> GetValidMoveCells() {
         return GetThreatenedCells();
     }
@@ -279,6 +283,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         bool isMovingOnBoard = (cellAtTurnStart != null && mustMove);
         if (isMovingOnBoard && mTargetCell != null && !mHighlightedCells.Contains(mTargetCell))
+            mTargetCell = null;
+
+        if (mTargetCell != null && !IsValidPlacement(mTargetCell))
             mTargetCell = null;
 
         if (mTargetCell != null) { Place(mTargetCell); }

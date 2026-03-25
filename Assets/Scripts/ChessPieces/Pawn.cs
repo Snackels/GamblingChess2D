@@ -7,6 +7,11 @@ public class Pawn : ChessPieces {
         base.Awake();
     }
 
+    public override bool IsValidPlacement(Cell cell) {
+        if (mCurrentCell != null) return true;
+        return cell.mBoardPosition.y == 0;
+    }
+
     public override List<Cell> GetThreatenedCells() {
         List<Cell> threatened = new List<Cell>();
         if (mCurrentCell == null) return threatened;
