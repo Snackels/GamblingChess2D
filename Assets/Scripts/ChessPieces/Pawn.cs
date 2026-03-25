@@ -8,7 +8,7 @@ public class Pawn : ChessPieces {
     }
 
     public override bool IsValidPlacement(Cell cell) {
-        if (mCurrentCell != null) return true;
+        if (mustMove) return true;
         return cell.mBoardPosition.y == 0;
     }
 
