@@ -13,6 +13,7 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
     [HideInInspector] public RectTransform mRectTransform = null;
     [HideInInspector] public ChessPieces mCurrentPiece = null;
     [HideInInspector] public int mThreatCount = 0;
+    [HideInInspector] public bool isHighlighted = false;
 
     Canvas overlayCanvas;
 
@@ -70,6 +71,7 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
         if (eventData.pointerDrag == null) return;
         ChessPieces piece = eventData.pointerDrag.GetComponent<ChessPieces>();
         if (piece == null) return;
+        if (!piece.isDragging) return;
         piece.mTargetCell = this;
         mOutlineImage.enabled = true;
     }
@@ -78,15 +80,16 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
         if (eventData.pointerDrag == null) return;
         ChessPieces piece = eventData.pointerDrag.GetComponent<ChessPieces>();
         if (piece == null) return;
+        if (!piece.isDragging) return;
         if (piece.mTargetCell == this)
             piece.mTargetCell = null;
-        mOutlineImage.enabled = false;
+        mOutlineImage.enabled = isHighlighted;
     }
 
     public void OnDrop(PointerEventData eventData) {
         ChessPieces piece = eventData.pointerDrag?.GetComponent<ChessPieces>();
         if (piece == null) return;
-        mOutlineImage.enabled = false;
+        mOutlineImage.enabled = isHighlighted;
     }
 
     void OnDestroy() {

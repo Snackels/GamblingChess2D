@@ -22,4 +22,18 @@ public class Pawn : ChessPieces {
 
         return threatened;
     }
+
+    public override List<Cell> GetValidMoveCells() {
+        List<Cell> valid = new List<Cell>();
+        if (mCurrentCell == null) return valid;
+
+        int x = mCurrentCell.mBoardPosition.x;
+        int y = mCurrentCell.mBoardPosition.y;
+
+        Cell forward = mCurrentCell.mBoard.GetCell(x, y + 1);
+        if (forward != null && forward.mCurrentPiece == null)
+            valid.Add(forward);
+
+        return valid;
+    }
 }

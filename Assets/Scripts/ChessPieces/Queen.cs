@@ -8,13 +8,21 @@ public class Queen : ChessPieces {
     }
 
     public override List<Cell> GetThreatenedCells() {
-        List<Cell> threatened = new List<Cell>();
-        if (mCurrentCell == null) return threatened;
+        return GetAllDirectionCells();
+    }
+
+    public override List<Cell> GetValidMoveCells() {
+        return GetAllDirectionCells();
+    }
+
+    List<Cell> GetAllDirectionCells() {
+        List<Cell> cells = new List<Cell>();
+        if (mCurrentCell == null) return cells;
 
         int x = mCurrentCell.mBoardPosition.x;
         int y = mCurrentCell.mBoardPosition.y;
 
-        // all 8 directions
+        // All 8 directions
         int[,] directions = {
             { 1, 0 }, { -1, 0 },  // horizontal
             { 0, 1 }, { 0, -1 },  // vertical
@@ -28,12 +36,12 @@ public class Queen : ChessPieces {
 
             for (int i = 1; i < 5; i++) {
                 Cell cell = mCurrentCell.mBoard.GetCell(x + dx * i, y + dy * i);
-                if (cell == null) break; // hit board edge, stop
-                threatened.Add(cell);
-                if (cell.mCurrentPiece != null) break; // blocked by piece, stop
+                if (cell == null) break;
+                cells.Add(cell);
+                if (cell.mCurrentPiece != null) break;
             }
         }
 
-        return threatened;
+        return cells;
     }
 }

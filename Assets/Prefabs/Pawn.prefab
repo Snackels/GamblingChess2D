@@ -136,7 +136,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -540, y: -357}
+  m_AnchoredPosition: {x: -280, y: -290}
   m_SizeDelta: {x: 175, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1626173911672973617
@@ -250,6 +250,7 @@ MonoBehaviour:
       m_Calls: []
   spawnTurn: -1
   mustMove: 0
+  hasMovedThisTurn: 0
   mCurrentCell: {fileID: 0}
   mTargetCell: {fileID: 0}
   requiredHoldTime: 0.75

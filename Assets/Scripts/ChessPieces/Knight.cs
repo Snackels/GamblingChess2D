@@ -8,13 +8,21 @@ public class Knight : ChessPieces {
     }
 
     public override List<Cell> GetThreatenedCells() {
-        List<Cell> threatened = new List<Cell>();
-        if (mCurrentCell == null) return threatened;
+        return GetLShapeCells();
+    }
+
+    public override List<Cell> GetValidMoveCells() {
+        return GetLShapeCells();
+    }
+
+    List<Cell> GetLShapeCells() {
+        List<Cell> cells = new List<Cell>();
+        if (mCurrentCell == null) return cells;
 
         int x = mCurrentCell.mBoardPosition.x;
         int y = mCurrentCell.mBoardPosition.y;
 
-        // all 8 possible L shape jumps
+        // All 8 possible L-shape jumps
         int[,] moves = {
             { 2, 1 }, { 2, -1 },   // right L
             { -2, 1 }, { -2, -1 }, // left L
@@ -27,10 +35,10 @@ public class Knight : ChessPieces {
                 x + moves[i, 0],
                 y + moves[i, 1]
             );
-            // knight is never blocked so no piece check needed
-            if (cell != null) threatened.Add(cell);
+            // Knight jumps over pieces — no blocking check needed
+            if (cell != null) cells.Add(cell);
         }
 
-        return threatened;
+        return cells;
     }
 }

@@ -8,8 +8,16 @@ public class Bishop : ChessPieces {
     }
 
     public override List<Cell> GetThreatenedCells() {
-        List<Cell> threatened = new List<Cell>();
-        if (mCurrentCell == null) return threatened;
+        return GetDiagonalCells();
+    }
+
+    public override List<Cell> GetValidMoveCells() {
+        return GetDiagonalCells();
+    }
+
+    List<Cell> GetDiagonalCells() {
+        List<Cell> cells = new List<Cell>();
+        if (mCurrentCell == null) return cells;
 
         int x = mCurrentCell.mBoardPosition.x;
         int y = mCurrentCell.mBoardPosition.y;
@@ -26,11 +34,11 @@ public class Bishop : ChessPieces {
             for (int i = 1; i < 5; i++) {
                 Cell cell = mCurrentCell.mBoard.GetCell(x + dx * i, y + dy * i);
                 if (cell == null) break;
-                threatened.Add(cell);
+                cells.Add(cell);
                 if (cell.mCurrentPiece != null) break;
             }
         }
 
-        return threatened;
+        return cells;
     }
 }

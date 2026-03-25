@@ -8,8 +8,17 @@ public class Rook : ChessPieces {
     }
 
     public override List<Cell> GetThreatenedCells() {
-        List<Cell> threatened = new List<Cell>();
-        if (mCurrentCell == null) return threatened;
+        return GetRayCells();
+    }
+
+    // Rook moves along the same rays — valid targets are all cells in range
+    public override List<Cell> GetValidMoveCells() {
+        return GetRayCells();
+    }
+
+    List<Cell> GetRayCells() {
+        List<Cell> cells = new List<Cell>();
+        if (mCurrentCell == null) return cells;
 
         int x = mCurrentCell.mBoardPosition.x;
         int y = mCurrentCell.mBoardPosition.y;
@@ -25,12 +34,12 @@ public class Rook : ChessPieces {
 
             for (int i = 1; i < 5; i++) {
                 Cell cell = mCurrentCell.mBoard.GetCell(x + dx * i, y + dy * i);
-                if (cell == null) break;        // hit board edge
-                threatened.Add(cell);
-                if (cell.mCurrentPiece != null) break; // blocked by piece, stop this direction
+                if (cell == null) break;
+                cells.Add(cell);
+                if (cell.mCurrentPiece != null) break; // blocked — include the cell but stop the ray
             }
         }
 
-        return threatened;
+        return cells;
     }
 }

@@ -37,6 +37,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     [HideInInspector] public int spawnTurn = -1;
     [HideInInspector] public bool mustMove = false;
+    [HideInInspector] public bool hasMovedThisTurn = false;
 
     Vector3 originalPosition;
     Cell cellAtTurnStart = null;
@@ -53,14 +54,20 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     float holdTime = 0f;
     [SerializeField] float requiredHoldTime = 0.75f;
 
+    bool dragAllowed = false;
+
     protected void ShowCells() {
-        foreach (Cell cell in mHighlightedCells)
+        foreach (Cell cell in mHighlightedCells) {
+            cell.isHighlighted = true;
             cell.mOutlineImage.enabled = true;
+        }
     }
 
     protected void ClearCells() {
-        foreach (Cell cell in mHighlightedCells)
+        foreach (Cell cell in mHighlightedCells) {
+            cell.isHighlighted = false;
             cell.mOutlineImage.enabled = false;
+        }
         mHighlightedCells.Clear();
     }
 
@@ -68,7 +75,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         return new List<Cell>();
     }
 
+    public virtual List<Cell> GetValidMoveCells() {
+        return GetThreatenedCells();
+    }
+
     public virtual void Place(Cell newCell) {
+        Cell previousCell = mCurrentCell;
         if (mCurrentCell != null)
             mCurrentCell.mCurrentPiece = null;
 
@@ -92,8 +104,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
         OnPiecePlaced?.Invoke(this);
         ThreatManager.Instance.RecalculateAllThreats();
-        if (mustMove && mCurrentCell != cellAtTurnStart)
+        if (mustMove && previousCell != null && newCell != cellAtTurnStart) {
             SetMustMove(false);
+            hasMovedThisTurn = true;
+        }
     }
 
     public void RecalculateThreats() {
@@ -166,6 +180,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         }
 
         mustMove = false;
+        hasMovedThisTurn = false;
         cellAtTurnStart = null;
         ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
         mCurrentThreats.Clear();
@@ -191,8 +206,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public void SetMustMove(bool value) {
         mustMove = value;
-        if (mustMove)
+        if (mustMove) {
             cellAtTurnStart = mCurrentCell;
+            hasMovedThisTurn = false;
+        }
         if (mustMoveIcon != null)
             mustMoveIcon.enabled = mustMove;
     }
@@ -209,14 +226,30 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         transform.localPosition = new Vector3(clampedPosition.x, clampedPosition.y, 0);
     }
 
+    bool CanDrag() {
+        if (mCurrentCell == null) return true;
+        if (hasMovedThisTurn) return false;
+        if (mustMove) return true;
+        if (spawnTurn == TurnManager.Instance.currentTurn) return true;
+        return false;
+    }
+
     public void OnBeginDrag(PointerEventData eventData) {
         CancelHold();
+        dragAllowed = false;
+        if (!CanDrag()) return;
+        dragAllowed = true;
 
         if (mCurrentCell != null) {
             ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
             mCurrentThreats.Clear();
             mCurrentCell.mCurrentPiece = null;
             ThreatManager.Instance.RecalculateAllThreats();
+        }
+
+        if (mustMove) {
+            mHighlightedCells = GetValidMoveCells();
+            ShowCells();
         }
 
         BeginDragEvent.Invoke(this);
@@ -236,6 +269,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public void OnDrag(PointerEventData eventData) { }
 
     public void OnEndDrag(PointerEventData eventData) {
+        if (!dragAllowed) return;
         EndDragEvent.Invoke(this);
         isDragging = false;
         imageComponent.raycastTarget = true;
@@ -243,11 +277,17 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (mTargetCell != null)
             mTargetCell.mOutlineImage.enabled = false;
 
-        if (mTargetCell != null)
-            Place(mTargetCell);
+        bool isMovingOnBoard = (cellAtTurnStart != null && mustMove);
+        if (isMovingOnBoard && mTargetCell != null && !mHighlightedCells.Contains(mTargetCell))
+            mTargetCell = null;
+
+        if (mTargetCell != null) { Place(mTargetCell); }
         else {
-            if (mCurrentCell != null)
-                mCurrentCell.mCurrentPiece = this;
+            if (cellAtTurnStart != null && mustMove) {
+                cellAtTurnStart.mCurrentPiece = this;
+                mCurrentCell = cellAtTurnStart;
+            }
+            else if (mCurrentCell != null) mCurrentCell.mCurrentPiece = this;
             transform.localPosition = originalPosition;
             ThreatManager.Instance.RecalculateAllThreats();
         }
