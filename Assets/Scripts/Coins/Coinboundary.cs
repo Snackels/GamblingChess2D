@@ -104,7 +104,6 @@ public class CoinBoundary : MonoBehaviour {
         var go = new GameObject(n);
         go.transform.SetParent(_root.transform);
         go.layer = coinBoundaryLayer;
-        Debug.Log($"CoinBoundary: built {n} on layer {go.layer}");
         var col = go.AddComponent<BoxCollider>();
         if (wallMaterial != null) col.material = wallMaterial;
         return col;
