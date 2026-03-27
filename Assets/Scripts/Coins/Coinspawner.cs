@@ -1,31 +1,11 @@
 using UnityEngine;
 
-/// <summary>
-/// Spawns a coin at a chosen world position inside the boundary.
-/// Coins fall in the +Z direction (toward the floor wall).
-///
-/// SETUP:
-///   1. Attach this to any GameObject (e.g. CoinManager)
-///   2. Assign CoinPrefab — needs Rigidbody + Collider + CoinResult
-///   3. Create an empty GameObject "SpawnPoint" inside the boundary, assign it
-///   4. On the coin Rigidbody: set Use Gravity = OFF
-///      We apply our own Z gravity so it falls toward the floor wall
-///   5. Wire your UI Button OnClick → CoinSpawner.SpawnCoin()
-///
-/// COIN RIGIDBODY SETTINGS (on the prefab):
-///   - Use Gravity: OFF  (we drive gravity manually via Gravity Force below)
-///   - Collision Detection: Continuous  (prevents tunneling through floor)
-///   - Interpolate: Interpolate
-///   - Constraints: nothing frozen
-/// </summary>
 public class CoinSpawner : MonoBehaviour {
     [Header("References")]
     [Tooltip("Coin prefab — Rigidbody, Collider, CoinResult")]
     public GameObject coinPrefab;
-
     [Tooltip("Where the coin spawns — place this empty GameObject inside your boundary")]
     public Transform spawnPoint;
-
     [Tooltip("Reference to boundary — used to clamp spawn point inside bounds")]
     public CoinBoundary boundary;
 
@@ -33,13 +13,32 @@ public class CoinSpawner : MonoBehaviour {
     [Tooltip("How fast the coin accelerates toward the floor (+Z). Tune for feel.")]
     public float gravityForce = 15f;
 
-    [Tooltip("Initial Z velocity when spawned — gives a satisfying drop-in feel")]
-    public float initialZVelocity = 2f;
+    [Header("Throw Force")]
+    [Tooltip("Direction the coin is thrown in world space. " +
+             "Think of this like the angle of your hand when you toss — " +
+             "(0,1,1) = forward and up, (0,0,1) = straight toward floor, (1,0.5,1) = right arc. " +
+             "Does not need to be normalized.")]
+    public Vector3 throwDirection = new Vector3(0f, 1f, 1f);
+
+    [Tooltip("How hard the coin is thrown. Higher = faster, travels further before settling.")]
+    public Vector2 throwSpeedRange = new Vector2(3f, 7f);
+
+    [Tooltip("Randomize the throw direction slightly each toss so coins don't all go the same way")]
+    public float throwDirectionVariance = 0.2f;
+
+    [Header("Spin")]
+    [Tooltip("How much angular velocity to apply on spawn — makes the coin tumble in the air")]
+    public Vector2 spinSpeedRange = new Vector2(5f, 15f);
+
+    [Tooltip("Randomize spin axis so each coin tumbles differently")]
+    public bool randomSpinAxis = true;
+
+    [Tooltip("Fixed spin axis if randomSpinAxis is off — (1,0,0) spins on X like a real coin flip")]
+    public Vector3 fixedSpinAxis = new Vector3(1f, 0f, 0f);
 
     [Header("Spawn Rotation")]
     [Tooltip("Spawn with a random rotation so every coin looks different")]
     public bool randomRotation = true;
-
     [Tooltip("If not random, spawn with this exact rotation")]
     public Vector3 fixedRotation = Vector3.zero;
 
@@ -54,25 +53,21 @@ public class CoinSpawner : MonoBehaviour {
     private readonly System.Collections.Generic.List<GameObject> _activeCoins
         = new System.Collections.Generic.List<GameObject>();
 
-    // ── public — wire to button ─────────────────────────────────────────────
     public void SpawnCoin() {
         if (coinPrefab == null || spawnPoint == null) {
             Debug.LogWarning("CoinSpawner: coinPrefab or spawnPoint not assigned.");
             return;
         }
 
-        // Enforce max coin limit
         if (_activeCoins.Count >= maxCoins)
             RemoveOldestCoin();
 
-        // Position with small jitter
+        // Position with jitter
         Vector3 pos = spawnPoint.position + new Vector3(
             Random.Range(-spawnJitter, spawnJitter),
             Random.Range(-spawnJitter, spawnJitter),
             0f
         );
-
-        // Clamp inside boundary XY if boundary is assigned
         if (boundary != null)
             pos = boundary.ClampInsideXY(pos);
 
@@ -83,16 +78,27 @@ public class CoinSpawner : MonoBehaviour {
         GameObject coin = Instantiate(coinPrefab, pos, rot);
         _activeCoins.Add(coin);
 
-        // Give initial Z velocity
         Rigidbody rb = coin.GetComponent<Rigidbody>();
-        if (rb != null)
-            rb.linearVelocity = new Vector3(0f, 0f, initialZVelocity);
+        if (rb != null) {
+            // Throw velocity — base direction + random variance
+            Vector3 dir = throwDirection.normalized;
+            dir += new Vector3(
+                Random.Range(-throwDirectionVariance, throwDirectionVariance),
+                Random.Range(-throwDirectionVariance, throwDirectionVariance),
+                Random.Range(-throwDirectionVariance, throwDirectionVariance)
+            );
+            rb.linearVelocity = dir.normalized * Random.Range(throwSpeedRange.x, throwSpeedRange.y);
 
-        // Track for cleanup
+            // Spin — like the coin tumbling end-over-end
+            Vector3 spinAxis = randomSpinAxis
+                ? Random.onUnitSphere
+                : fixedSpinAxis.normalized;
+            rb.angularVelocity = spinAxis * Random.Range(spinSpeedRange.x, spinSpeedRange.y);
+        }
+
         coin.AddComponent<CoinLifetime>().Init(this);
     }
 
-    // called by CoinLifetime when a coin is destroyed/returned
     public void UnregisterCoin(GameObject coin) {
         _activeCoins.Remove(coin);
     }
@@ -104,21 +110,30 @@ public class CoinSpawner : MonoBehaviour {
         if (oldest != null) Destroy(oldest);
     }
 
-    // ── gizmo — shows spawn point and jitter radius ─────────────────────────
     private void OnDrawGizmos() {
         if (spawnPoint == null) return;
 
+        // Spawn point
         Gizmos.color = new Color(1f, 1f, 0.2f, 0.9f);
         Gizmos.DrawWireSphere(spawnPoint.position, 0.08f);
 
+        // Jitter radius
         Gizmos.color = new Color(1f, 1f, 0.2f, 0.25f);
         Gizmos.DrawWireSphere(spawnPoint.position, spawnJitter);
 
-        // Arrow pointing +Z (fall direction)
-        Gizmos.color = new Color(1f, 0.5f, 0.1f, 0.9f);
+        // Throw direction arrows — green, shows min and max throw range
+        Gizmos.color = new Color(0.2f, 1f, 0.4f, 0.5f);
         Vector3 from = spawnPoint.position;
-        Vector3 to = from + Vector3.forward * 0.5f;
-        Gizmos.DrawLine(from, to);
-        Gizmos.DrawWireSphere(to, 0.04f);
+        Vector3 baseDir = throwDirection.normalized;
+        Gizmos.DrawLine(from, from + baseDir * Mathf.Clamp(throwSpeedRange.x * 0.15f, 0.2f, 2f));
+        Gizmos.color = new Color(0.2f, 1f, 0.4f, 0.95f);
+        Vector3 maxTip = from + baseDir * Mathf.Clamp(throwSpeedRange.y * 0.15f, 0.3f, 2f);
+        Gizmos.DrawLine(from, maxTip);
+        Gizmos.DrawWireSphere(maxTip, 0.05f);
+
+        // Z gravity arrow — orange, always +Z
+        Gizmos.color = new Color(1f, 0.5f, 0.1f, 0.9f);
+        Gizmos.DrawLine(from, from + Vector3.forward * 0.5f);
+        Gizmos.DrawWireSphere(from + Vector3.forward * 0.5f, 0.04f);
     }
 }
