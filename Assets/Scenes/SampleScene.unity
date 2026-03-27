@@ -1425,6 +1425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CoinPanel
   panelRect: {fileID: 1099117510}
   buttonRect: {fileID: 885617206}
+  coinBoundary: {fileID: 1696414985}
   hiddenY: -815
   shownY: -10
   slideDuration: 0.45
@@ -1778,27 +1779,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.x
-      value: 80.000015
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.y
-      value: 80
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.z
-      value: 80.000015
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.0300293
+      value: -3.84
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.6799927
+      value: -1.49
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.35
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1845,6 +1846,62 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
+--- !u!1 &1696414983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1696414984}
+  - component: {fileID: 1696414985}
+  m_Layer: 7
+  m_Name: Coin Boundary
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1696414984
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696414983}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1696414985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696414983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2920948287e774b40a0213615f95102e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinBoundary
+  center: {x: -5.35, y: -0.7, z: 0}
+  size: {x: 4.85, y: 6.75}
+  frontZ: 0
+  floorZ: 6.35
+  wallThickness: 0.2
+  wallMaterial: {fileID: 13400000, guid: 547e147629d76dc4fa9946d03cce61c9, type: 2}
+  coinBoundaryLayer: 6
+  startOpen: 0
+  fillColor: {r: 0.2, g: 0.85, b: 1, a: 0.12}
+  wireColor: {r: 0.2, g: 0.85, b: 1, a: 0.85}
+  floorColor: {r: 1, g: 0.55, b: 0.1, a: 0.9}
+  showLabels: 0
 --- !u!1 &1732775649
 GameObject:
   m_ObjectHideFlags: 0
@@ -3139,3 +3196,4 @@ SceneRoots:
   - {fileID: 903373221}
   - {fileID: 1361196222}
   - {fileID: 1427738006}
+  - {fileID: 1696414984}

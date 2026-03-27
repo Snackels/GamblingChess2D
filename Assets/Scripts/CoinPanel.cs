@@ -7,6 +7,10 @@ public class CoinPanel : MonoBehaviour {
     public RectTransform panelRect;
     public RectTransform buttonRect;
 
+
+    [Tooltip("Optional — toggles boundary when panel opens/closes")]
+    public CoinBoundary coinBoundary;
+
     [Header("Slide Settings")]
     public float hiddenY = -815f;
     public float shownY = -10f;
@@ -54,6 +58,8 @@ public class CoinPanel : MonoBehaviour {
         panelRect.DOAnchorPosY(target, slideDuration)
                  .SetEase(ease)
                  .SetUpdate(true);
+
+        coinBoundary?.SetOpen(_isOpen);
     }
 
     public void OnHoverEnter() {
