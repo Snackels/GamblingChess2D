@@ -16,12 +16,14 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
     [HideInInspector] public bool isHighlighted = false;
 
     Canvas overlayCanvas;
+    Canvas gameCanvas;
 
     public void Setup(Vector2Int newBoardPosition, Board newBoard, Canvas overlay) {
         mBoardPosition = newBoardPosition;
         mBoard = newBoard;
         mRectTransform = GetComponent<RectTransform>();
         overlayCanvas = overlay;
+        gameCanvas = GetComponentInParent<Canvas>();
 
         mThreatText.transform.SetParent(overlayCanvas.transform, false);
         UpdateThreatDisplay();
@@ -30,14 +32,14 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
     void Update() {
         if (mThreatText != null && mThreatCount > 0) {
             Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(
-                Camera.main, transform.position
-            );
+            gameCanvas.worldCamera, transform.position
+        );
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                overlayCanvas.transform as RectTransform,
-                screenPos,
-                null,
-                out Vector2 localPos
-            );
+               overlayCanvas.transform as RectTransform,
+               screenPos,
+               null,
+               out Vector2 localPos
+           );
             mThreatText.rectTransform.localPosition = localPos;
         }
     }
