@@ -797,7 +797,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 20
   m_TargetDisplay: 0
 --- !u!114 &663571808
 MonoBehaviour:
@@ -1158,6 +1158,7 @@ GameObject:
   - component: {fileID: 924090210}
   - component: {fileID: 924090209}
   - component: {fileID: 924090212}
+  - component: {fileID: 924090213}
   m_Layer: 5
   m_Name: SpawnBishop
   m_TagString: Untagged
@@ -1278,6 +1279,29 @@ MonoBehaviour:
   piecePrefab: {fileID: 3305460439659595366, guid: 7c89f0fabed151a46bd2d3fb009f2ec4, type: 3}
   visualPrefab: {fileID: 5095204316269051324, guid: 3761540a1d443a04dac708c7ec4c9760, type: 3}
   visualParent: {fileID: 903373221}
+--- !u!223 &924090213
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 924090206}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &966053420
 GameObject:
   m_ObjectHideFlags: 0
@@ -1407,7 +1431,7 @@ MonoBehaviour:
   initialZVelocity: 2
   randomRotation: 1
   fixedRotation: {x: 0, y: 0, z: 0}
-  spawnJitter: 0.1
+  spawnJitter: 0.15
   maxCoins: 20
 --- !u!4 &1064317782
 Transform:
@@ -1418,7 +1442,7 @@ Transform:
   m_GameObject: {fileID: 1064317780}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.74673, y: -1.40054, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1452,7 +1476,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1099117509}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -10000}
   m_LocalScale: {x: 6.7, y: 8.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1509,7 +1533,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!114 &1099117513
 MonoBehaviour:
@@ -1887,7 +1911,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 20
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!114 &1393362248
 MonoBehaviour:
@@ -1980,7 +2004,7 @@ Transform:
   m_GameObject: {fileID: 1457591028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.84, y: -1.49, z: 1}
+  m_LocalPosition: {x: -5.27, y: -1.05, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2192,6 +2216,7 @@ GameObject:
   - component: {fileID: 1907063266}
   - component: {fileID: 1907063265}
   - component: {fileID: 1907063268}
+  - component: {fileID: 1907063269}
   m_Layer: 5
   m_Name: SpawnRook
   m_TagString: Untagged
@@ -2312,6 +2337,29 @@ MonoBehaviour:
   piecePrefab: {fileID: 3616878487910648475, guid: 04bc485816fd0c248a9e63a745659d0b, type: 3}
   visualPrefab: {fileID: 1451724366678596157, guid: 43b506db319b3f74aafe2a679c4eaf9e, type: 3}
   visualParent: {fileID: 903373221}
+--- !u!223 &1907063269
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907063262}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &1907953675
 GameObject:
   m_ObjectHideFlags: 0
@@ -2325,6 +2373,7 @@ GameObject:
   - component: {fileID: 1907953679}
   - component: {fileID: 1907953678}
   - component: {fileID: 1907953681}
+  - component: {fileID: 1907953682}
   m_Layer: 5
   m_Name: SpawnKnight
   m_TagString: Untagged
@@ -2445,6 +2494,29 @@ MonoBehaviour:
   piecePrefab: {fileID: 2571421058880123909, guid: 9177afe09d6709241959aa6e65b8113e, type: 3}
   visualPrefab: {fileID: 5713671185349216846, guid: 048f60747e43ded4b857041d168eb385, type: 3}
   visualParent: {fileID: 903373221}
+--- !u!223 &1907953682
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907953675}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &1942976792
 GameObject:
   m_ObjectHideFlags: 0
@@ -2458,6 +2530,7 @@ GameObject:
   - component: {fileID: 1942976796}
   - component: {fileID: 1942976795}
   - component: {fileID: 1942976798}
+  - component: {fileID: 1942976799}
   m_Layer: 5
   m_Name: SpawnQueen
   m_TagString: Untagged
@@ -2578,6 +2651,29 @@ MonoBehaviour:
   piecePrefab: {fileID: 8866180298459732144, guid: c7a01278f8568bf4ead60a507dd7a315, type: 3}
   visualPrefab: {fileID: 3095865207628252115, guid: 107c07c68c722334c93b6e88cc7fa5b7, type: 3}
   visualParent: {fileID: 903373221}
+--- !u!223 &1942976799
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942976792}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &1951766528
 GameObject:
   m_ObjectHideFlags: 0
@@ -2844,6 +2940,7 @@ GameObject:
   - component: {fileID: 2042015905}
   - component: {fileID: 2042015904}
   - component: {fileID: 2042015907}
+  - component: {fileID: 2042015908}
   m_Layer: 5
   m_Name: SpawnPawn
   m_TagString: Untagged
@@ -2964,6 +3061,29 @@ MonoBehaviour:
   piecePrefab: {fileID: 7120681665623329311, guid: 9fbf1acdd53776a408114341da5811aa, type: 3}
   visualPrefab: {fileID: 9078271800408497717, guid: 9439b6853ae501849a3f4e93e08cd04f, type: 3}
   visualParent: {fileID: 903373221}
+--- !u!223 &2042015908
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2042015901}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 1
+  m_TargetDisplay: 0
 --- !u!1 &2045810798
 GameObject:
   m_ObjectHideFlags: 0
