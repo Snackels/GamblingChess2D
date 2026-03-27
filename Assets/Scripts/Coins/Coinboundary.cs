@@ -47,17 +47,19 @@ public class CoinBoundary : MonoBehaviour {
     public bool showLabels = true;
 
     // ── internals ───────────────────────────────────────────────────────────
-    GameObject _root;
-    BoxCollider _left, _right, _top, _bottom, _floor;
-    bool _isOpen;
+    private GameObject _root;
+    private BoxCollider _left, _right, _top, _bottom, _floor;
+    private bool _isOpen;
 
     // ── lifecycle ────────────────────────────────────────────────────────────
-    void Awake() {
+    private void Awake() { }
+
+    private void Start() {
         Build();
         SetOpen(startOpen);
     }
 
-    void OnValidate() {
+    private void OnValidate() {
         if (_floor != null) Refresh();
     }
 
@@ -69,8 +71,23 @@ public class CoinBoundary : MonoBehaviour {
 
     public void Toggle() => SetOpen(!_isOpen);
 
+    /// <summary>
+    /// Clamps a world position inside the boundary XY extents.
+    /// Used by CoinSpawner to guarantee spawn point never starts outside a wall.
+    /// </summary>
+    public Vector3 ClampInsideXY(Vector3 pos) {
+        float margin = wallThickness + 0.1f;
+        pos.x = Mathf.Clamp(pos.x,
+            center.x - size.x * 0.5f + margin,
+            center.x + size.x * 0.5f - margin);
+        pos.y = Mathf.Clamp(pos.y,
+            center.y - size.y * 0.5f + margin,
+            center.y + size.y * 0.5f - margin);
+        return pos;
+    }
+
     // ── build / refresh ──────────────────────────────────────────────────────
-    void Build() {
+    private void Build() {
         _root = new GameObject("_CoinBoundaryWalls");
         _root.transform.SetParent(transform);
 
@@ -83,16 +100,17 @@ public class CoinBoundary : MonoBehaviour {
         Refresh();
     }
 
-    BoxCollider MakeWall(string n) {
+    private BoxCollider MakeWall(string n) {
         var go = new GameObject(n);
         go.transform.SetParent(_root.transform);
         go.layer = coinBoundaryLayer;
+        Debug.Log($"CoinBoundary: built {n} on layer {go.layer}");
         var col = go.AddComponent<BoxCollider>();
         if (wallMaterial != null) col.material = wallMaterial;
         return col;
     }
 
-    void Refresh() {
+    private void Refresh() {
         float hw = size.x * 0.5f;
         float hh = size.y * 0.5f;
         float cx = center.x;
@@ -114,7 +132,7 @@ public class CoinBoundary : MonoBehaviour {
                        new Vector3(size.x + t * 2, size.y + t * 2, t));
     }
 
-    void Place(BoxCollider col, Vector3 pos, Vector3 sz) {
+    private void Place(BoxCollider col, Vector3 pos, Vector3 sz) {
         col.transform.position = pos;
         col.transform.rotation = Quaternion.identity;
         col.center = Vector3.zero;
@@ -123,7 +141,7 @@ public class CoinBoundary : MonoBehaviour {
     }
 
     // ── gizmos ───────────────────────────────────────────────────────────────
-    void OnDrawGizmos() {
+    private void OnDrawGizmos() {
         float depth = (floorZ - frontZ) + wallThickness;
         float midZ = frontZ + depth * 0.5f;
         var vol = new Vector3(center.x, center.y, midZ);
