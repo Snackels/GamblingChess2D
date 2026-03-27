@@ -73,13 +73,6 @@ public class ChessPieceVisual : MonoBehaviour {
         transform.position = Vector3.Lerp(transform.position, targetWorldPos, followSpeed * Time.deltaTime);
     }
 
-    Vector3 UIToWorldPosition(Vector3 uiPosition) {
-        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(canvas.worldCamera, uiPosition);
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPoint.x, screenPoint.y, 0));
-        worldPos.z = fixedZ;
-        return worldPos;
-    }
-
     void FollowRotation() {
         Vector3 movement = transform.position - pieceTransform.position;
         movementDelta = Vector3.Lerp(movementDelta, movement, 25 * Time.deltaTime);

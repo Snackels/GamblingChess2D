@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2959242221109840399}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ShakeParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8353463808848813075}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TiltParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,7 +74,7 @@ GameObject:
   m_Component:
   - component: {fileID: 817830497274312177}
   - component: {fileID: 964222407886526020}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Pawn3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,6 +193,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 592846f7a173cd64dbf7baf8b0a95fa8, type: 3}
       propertyPath: m_Name
       value: Pawn
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 592846f7a173cd64dbf7baf8b0a95fa8, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

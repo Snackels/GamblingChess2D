@@ -4,12 +4,15 @@ public class ChessPiecesVisualManager : MonoBehaviour {
     public static ChessPiecesVisualManager Instance;
 
     public Vector3 MouseWorldPos { get; private set; }
-    Camera mainCamera;
+
+    [SerializeField] Camera mainCamera;
+
     Canvas canvas;
 
     void Awake() {
         Instance = this;
-        mainCamera = Camera.main;
+        if (mainCamera == null)
+            mainCamera = Camera.main;
     }
 
     public void SetCanvas(Canvas c) {

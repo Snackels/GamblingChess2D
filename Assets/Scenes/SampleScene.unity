@@ -306,7 +306,6 @@ GameObject:
   m_Component:
   - component: {fileID: 487911582}
   - component: {fileID: 487911581}
-  - component: {fileID: 487911580}
   - component: {fileID: 487911579}
   m_Layer: 0
   m_Name: 3D Camera
@@ -359,14 +358,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!81 &487911580
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 487911578}
-  m_Enabled: 1
 --- !u!20 &487911581
 Camera:
   m_ObjectHideFlags: 0
@@ -1339,6 +1330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc0ae33706ad22c4ab7f4f50356effed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChessPiecesVisualManager
+  mainCamera: {fileID: 519420031}
 --- !u!4 &966053423
 Transform:
   m_ObjectHideFlags: 0
@@ -1786,27 +1778,27 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.x
-      value: 65
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.y
-      value: 65
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.z
-      value: 65
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -6.03
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -2.68
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 6.35
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalRotation.w
