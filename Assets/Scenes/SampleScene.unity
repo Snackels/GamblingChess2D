@@ -1773,7 +1773,7 @@ MonoBehaviour:
   gravityForce: 15
   throwDirection: {x: -5.63, y: 1.35, z: 2.55}
   throwSpeedRange: {x: 15, y: 28}
-  throwDirectionVariance: 0.2
+  throwDirectionVariance: 0.4
   spinSpeedRange: {x: 5, y: 15}
   randomSpinAxis: 1
   fixedSpinAxis: {x: 1, y: 0, z: 0}
