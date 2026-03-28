@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.x
-      value: 50
+      value: 30.000002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.y
-      value: 50
+      value: 30.000002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalScale.z
-      value: 50
+      value: 30.000002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       propertyPath: m_LocalPosition.x
@@ -84,6 +84,9 @@ PrefabInstance:
       addedObject: {fileID: 7076407909014023579}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
       insertIndex: -1
+      addedObject: {fileID: -3298738194940843556}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1356553530774022627}
   m_SourcePrefab: {fileID: 100100000, guid: 08563f27caa0c894f9c6726438bce8ca, type: 3}
 --- !u!1 &8448415161739249026 stripped
@@ -131,6 +134,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinGravity
   gravity: 15
+--- !u!114 &-3298738194940843556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8448415161739249026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dff699cfa76ec684a94574afacfde72e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinFlattener
+  flatDotThreshold: 0.98
+  floorZ: 6.35
+  floorTolerance: 0.1
+  settleSpeedThreshold: 0.3
+  settleWaitTime: 0.2
+  bounceForce: 2
+  bounceTorque: 2
+  maxBounceAttempts: 20
 --- !u!64 &1356553530774022627
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -138,7 +161,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8448415161739249026}
-  m_Material: {fileID: 13400000, guid: 547e147629d76dc4fa9946d03cce61c9, type: 2}
+  m_Material: {fileID: 13400000, guid: 126979e62876b8044b731075b7330e66, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

@@ -19,7 +19,8 @@ public class CoinGravity : MonoBehaviour {
     private void Awake() => _rb = GetComponent<Rigidbody>();
 
     private void FixedUpdate() {
-        // F = m * a  — apply as force so mass affects behaviour naturally
         _rb.AddForce(0f, 0f, gravity * _rb.mass, ForceMode.Force);
     }
 }
+
+

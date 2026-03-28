@@ -56,12 +56,11 @@ public class CoinSpawner : MonoBehaviour {
     [Tooltip("Random XY offset per coin so they don't all stack at the same point")]
     public float spawnJitter = 0.1f;
 
-    private readonly System.Collections.Generic.List<GameObject> _activeCoins
-        = new System.Collections.Generic.List<GameObject>();
+    readonly System.Collections.Generic.List<GameObject> _activeCoins = new System.Collections.Generic.List<GameObject>();
 
-    private bool _spawning = false;
+    bool _spawning = false;
 
-    private void Start() {
+    void Start() {
         UpdateCountText();
     }
 
@@ -75,7 +74,7 @@ public class CoinSpawner : MonoBehaviour {
         UpdateCountText();
     }
 
-    private void UpdateCountText() {
+    void UpdateCountText() {
         if (coinCountText != null)
             coinCountText.text = coinCountToThrow.ToString();
     }
@@ -89,7 +88,7 @@ public class CoinSpawner : MonoBehaviour {
         StartCoroutine(SpawnBatch(coinCountToThrow));
     }
 
-    private IEnumerator SpawnBatch(int count) {
+    IEnumerator SpawnBatch(int count) {
         _spawning = true;
         for (int i = 0; i < count; i++) {
             SpawnSingle();
@@ -99,8 +98,7 @@ public class CoinSpawner : MonoBehaviour {
         _spawning = false;
     }
 
-    private void SpawnSingle() {
-        // Enforce alive limit
+    void SpawnSingle() {
         if (_activeCoins.Count >= maxCoinsAlive)
             RemoveOldestCoin();
 
@@ -139,14 +137,21 @@ public class CoinSpawner : MonoBehaviour {
         _activeCoins.Remove(coin);
     }
 
-    private void RemoveOldestCoin() {
+    public void ClearCoins() {
+        var copy = new System.Collections.Generic.List<GameObject>(_activeCoins);
+        foreach (var coin in copy)
+            if (coin != null) Destroy(coin);
+        _activeCoins.Clear();
+    }
+
+    void RemoveOldestCoin() {
         if (_activeCoins.Count == 0) return;
         GameObject oldest = _activeCoins[0];
         _activeCoins.RemoveAt(0);
         if (oldest != null) Destroy(oldest);
     }
 
-    private void OnDrawGizmos() {
+    void OnDrawGizmos() {
         if (spawnPoint == null) return;
 
         Gizmos.color = new Color(1f, 1f, 0.2f, 0.9f);

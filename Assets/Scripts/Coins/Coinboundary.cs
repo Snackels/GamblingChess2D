@@ -2,26 +2,20 @@ using UnityEngine;
 
 public class CoinBoundary : MonoBehaviour {
     [Header("Boundary XY Size")]
-    [Tooltip("World space center (XY). Z is controlled by Front Z and Floor Z below.")]
     public Vector3 center = Vector3.zero;
 
-    [Tooltip("Width (X) and Height (Y) of the boundary")]
     public Vector2 size = new Vector2(6f, 4f);
 
     [Header("Z Depth")]
-    [Tooltip("Z position of the FRONT wall — coins cannot escape toward the camera past this")]
     public float frontZ = 0f;
 
-    [Tooltip("Z position of the FLOOR wall — coins fall toward +Z and stop here")]
     public float floorZ = 8f;
 
     [Header("Wall Settings")]
     public float wallThickness = 0.2f;
 
-    [Tooltip("Physic Material — set Bounciness and Bounce Combine = Maximum here")]
     public PhysicsMaterial wallMaterial;
 
-    [Tooltip("Must match your CoinBoundary layer number in Project Settings")]
     public int coinBoundaryLayer = 7;
 
     [Header("Starting State")]
@@ -34,18 +28,18 @@ public class CoinBoundary : MonoBehaviour {
     public Color frontColor = new Color(0.2f, 1f, 0.4f, 0.9f);
     public bool showLabels = true;
 
-    private GameObject _root;
-    private BoxCollider _left, _right, _top, _bottom, _floor, _front;
-    private bool _isOpen;
+    GameObject _root;
+    BoxCollider _left, _right, _top, _bottom, _floor, _front;
+    bool _isOpen;
 
-    private void Awake() { }
+    void Awake() { }
 
-    private void Start() {
+    void Start() {
         Build();
         SetOpen(startOpen);
     }
 
-    private void OnValidate() {
+    void OnValidate() {
         if (_floor != null) Refresh();
     }
 
@@ -67,7 +61,7 @@ public class CoinBoundary : MonoBehaviour {
         return pos;
     }
 
-    private void Build() {
+    void Build() {
         _root = new GameObject("_CoinBoundaryWalls");
         _root.transform.SetParent(transform);
 
@@ -81,7 +75,7 @@ public class CoinBoundary : MonoBehaviour {
         Refresh();
     }
 
-    private BoxCollider MakeWall(string n) {
+    BoxCollider MakeWall(string n) {
         var go = new GameObject(n);
         go.transform.SetParent(_root.transform);
         go.layer = coinBoundaryLayer;
@@ -90,7 +84,7 @@ public class CoinBoundary : MonoBehaviour {
         return col;
     }
 
-    private void Refresh() {
+    void Refresh() {
         float hw = size.x * 0.5f;
         float hh = size.y * 0.5f;
         float cx = center.x;
@@ -112,7 +106,7 @@ public class CoinBoundary : MonoBehaviour {
                        new Vector3(size.x + t * 2f, size.y + t * 2f, t));
     }
 
-    private void Place(BoxCollider col, Vector3 pos, Vector3 sz) {
+    void Place(BoxCollider col, Vector3 pos, Vector3 sz) {
         col.transform.position = pos;
         col.transform.rotation = Quaternion.identity;
         col.center = Vector3.zero;
@@ -120,7 +114,7 @@ public class CoinBoundary : MonoBehaviour {
         if (wallMaterial != null) col.material = wallMaterial;
     }
 
-    private void OnDrawGizmos() {
+    void OnDrawGizmos() {
         float depth = (floorZ - frontZ) + wallThickness * 2f;
         float midZ = frontZ + depth * 0.5f;
 
