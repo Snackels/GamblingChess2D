@@ -44,8 +44,6 @@ public class CoinFlattener : MonoBehaviour {
         bool flat = IsFlat();
         bool onFloor = IsOnFloor();
 
-        Debug.Log($"{name} settle check — flat:{flat} onFloor:{onFloor} attempts:{_attempts} Z:{transform.position.z:F2}");
-
         if (flat && onFloor) {
             _settled = true;
             return;
