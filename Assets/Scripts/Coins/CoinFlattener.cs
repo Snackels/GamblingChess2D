@@ -2,25 +2,22 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class CoinFlattener : MonoBehaviour {
+
     [Header("Flat Detection")]
     [Range(0f, 1f)]
     public float flatDotThreshold = 0.85f;
 
     [Header("Floor Detection")]
     public float floorZ = 8f;
-
     public float floorTolerance = 0.3f;
 
     [Header("Settle Detection")]
     public float settleSpeedThreshold = 0.3f;
-
     public float settleWaitTime = 0.4f;
 
     [Header("Bounce")]
     public float bounceForce = 4f;
-
     public float bounceTorque = 6f;
-
     public int maxBounceAttempts = 5;
 
     Rigidbody _rb;
@@ -28,13 +25,14 @@ public class CoinFlattener : MonoBehaviour {
     int _attempts;
     bool _settled;
 
+    public bool Settled => _settled;
+
     void Awake() => _rb = GetComponent<Rigidbody>();
 
     void FixedUpdate() {
         if (_settled) return;
 
-        bool isSlow = _rb.linearVelocity.magnitude < settleSpeedThreshold &&
-                      _rb.angularVelocity.magnitude < settleSpeedThreshold;
+        bool isSlow = _rb.linearVelocity.magnitude < settleSpeedThreshold && _rb.angularVelocity.magnitude < settleSpeedThreshold;
 
         _slowTimer = isSlow ? _slowTimer + Time.fixedDeltaTime : 0f;
 
@@ -43,6 +41,7 @@ public class CoinFlattener : MonoBehaviour {
 
         bool flat = IsFlat();
         bool onFloor = IsOnFloor();
+
 
         if (flat && onFloor) {
             _settled = true;

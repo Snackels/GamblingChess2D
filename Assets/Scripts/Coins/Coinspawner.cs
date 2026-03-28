@@ -4,48 +4,32 @@ using System.Collections;
 
 public class CoinSpawner : MonoBehaviour {
     [Header("References")]
-    [Tooltip("Coin prefab — Rigidbody, Collider, CoinResult")]
     public GameObject coinPrefab;
-    [Tooltip("Where the coin spawns — place this empty GameObject inside your boundary")]
     public Transform spawnPoint;
-    [Tooltip("Reference to boundary — used to clamp spawn point inside bounds")]
     public CoinBoundary boundary;
+    public CoinMaster coinMaster;
 
     [Header("Batch Spawn UI")]
-    [Tooltip("TMP text that displays the current coin count to throw")]
     public TextMeshProUGUI coinCountText;
-    [Tooltip("How many coins to throw per spawn. Use AddCoin() and RemoveCoin() for +/- buttons")]
     public int coinCountToThrow = 1;
-    [Tooltip("Minimum coins per throw")]
     public int minCoinsPerThrow = 1;
-    [Tooltip("Maximum coins allowed per throw — caps the +/- buttons")]
     public int maxCoinsPerThrow = 10;
-    [Tooltip("Seconds between each coin spawning in a batch — stagger so they don't all stack")]
     public float spawnStagger = 0.08f;
 
     [Header("Active Coin Limit")]
-    [Tooltip("Max coins alive in the scene at once — oldest removed when limit hit")]
     public int maxCoinsAlive = 20;
 
     [Header("Z Gravity")]
-    [Tooltip("How fast the coin accelerates toward the floor (+Z). Tune for feel.")]
     public float gravityForce = 15f;
 
     [Header("Throw Force")]
-    [Tooltip("Direction the coin is thrown in world space. " +
-             "(0,1,1) = up and forward, (0,0,1) = straight to floor, (1,0.5,1) = right arc.")]
     public Vector3 throwDirection = new Vector3(0f, 1f, 1f);
-    [Tooltip("Min / Max throw speed — each coin picks a random value in this range")]
     public Vector2 throwSpeedRange = new Vector2(3f, 7f);
-    [Tooltip("Random spread added to throw direction each toss")]
     public float throwDirectionVariance = 0.2f;
 
     [Header("Spin")]
-    [Tooltip("Min / Max angular velocity — each coin picks a random value in this range")]
     public Vector2 spinSpeedRange = new Vector2(5f, 15f);
-    [Tooltip("Randomize spin axis so each coin tumbles differently")]
     public bool randomSpinAxis = true;
-    [Tooltip("Fixed spin axis if randomSpinAxis is off — (1,0,0) = real coin flip axis")]
     public Vector3 fixedSpinAxis = new Vector3(1f, 0f, 0f);
 
     [Header("Spawn Rotation")]
@@ -53,7 +37,6 @@ public class CoinSpawner : MonoBehaviour {
     public Vector3 fixedRotation = Vector3.zero;
 
     [Header("Spawn Wobble")]
-    [Tooltip("Random XY offset per coin so they don't all stack at the same point")]
     public float spawnJitter = 0.1f;
 
     readonly System.Collections.Generic.List<GameObject> _activeCoins = new System.Collections.Generic.List<GameObject>();
@@ -90,6 +73,7 @@ public class CoinSpawner : MonoBehaviour {
 
     IEnumerator SpawnBatch(int count) {
         _spawning = true;
+        coinMaster?.RegisterThrow(count);
         for (int i = 0; i < count; i++) {
             SpawnSingle();
             if (i < count - 1)
