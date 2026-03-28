@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5c6b09df59113e4084cf51fa00ca554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinResult
-  angleToleranceDegrees: 25
+  angleToleranceDegrees: 5
 --- !u!64 &1356553530774022627
 MeshCollider:
   m_ObjectHideFlags: 0
