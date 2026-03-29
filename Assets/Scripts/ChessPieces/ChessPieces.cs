@@ -64,7 +64,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public bool isActive = true;
     public bool isSelectedForUpkeep = false;
     public float baseCost = 0f;
-    [HideInInspector] public float owedUpkeep = 0f;  // unpaid upkeep from last end-turn
+    [HideInInspector] public float owedUpkeep = 0f;
     protected bool _wasReactivatedThisTurn = false;
 
     float pointerDownTime;
@@ -163,6 +163,14 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         Destroy(gameObject);
     }
 
+    public void RemoveVisual() {
+        if (chessPieceVisual != null) {
+            DOTween.Kill(chessPieceVisual.transform);
+            Destroy(chessPieceVisual.gameObject);
+            chessPieceVisual = null;
+        }
+    }
+
     public void RecalculateThreats() {
         ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
         mCurrentThreats = GetThreatenedCells();
@@ -246,13 +254,11 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public virtual void Penalty() {
-        // Blank for now — will be implemented later.
     }
 
     public void ToggleUpkeepSelection() {
         if (mCurrentCell == null) return;
 
-        // If piece is inactive and has owed upkeep, let player pay now to reactivate
         if (!isActive) {
             TryPayOwedUpkeep();
             return;
@@ -265,9 +271,6 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         transform.DOLocalMoveY(targetY, selectionTransition).SetEase(Ease.OutBack);
     }
 
-    /// <summary>
-    /// Called mid-turn when a player clicks an inactive piece to pay its owed upkeep.
-    /// </summary>
     public void TryPayOwedUpkeep() {
         if (isActive || owedUpkeep <= 0f) return;
         if (!ScoreManager.Instance.CanAfford(owedUpkeep)) {
@@ -279,7 +282,6 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         _wasReactivatedThisTurn = true;
         SetActive();
         SetMustMove(true);
-        // Upkeep already paid — keep piece at normal height and deselected
         isSelectedForUpkeep = false;
         transform.DOLocalMoveY(originalPosition.y, selectionTransition).SetEase(Ease.OutSine);
         Debug.Log($"[ChessPieces] {name} reactivated via mid-turn upkeep payment");
@@ -437,7 +439,6 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         CancelHold();
 
         if (pointerUpTime - pointerDownTime < 0.2f && !wasDragged && mCurrentCell != null) {
-            // Check for double-click
             if (pointerUpTime - _lastClickTime <= doubleClickWindow) {
                 _lastClickTime = -1f;
                 ToggleUpkeepSelection();

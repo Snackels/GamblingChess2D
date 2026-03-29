@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Attach to a UI Panel (the promotion popup).
@@ -36,8 +34,14 @@ public class PawnPromotionUI : MonoBehaviour {
     /// <summary>Called by Pawn when it lands on the last row.</summary>
     public void Show(Pawn pawn) {
         pendingPawn = pawn;
+
+        // Snap popup to the pawn's canvas position
+        RectTransform popupRect = GetComponent<RectTransform>();
+        RectTransform pawnRect = pawn.GetComponent<RectTransform>();
+        popupRect.anchoredPosition = pawnRect.anchoredPosition + Vector2.up * 80f;
+
         gameObject.SetActive(true);
-        Time.timeScale = 0f;   // freeze game while choosing
+        Time.timeScale = 0f;
     }
 
     // --- wire each button's OnClick to one of these ---
@@ -50,23 +54,30 @@ public class PawnPromotionUI : MonoBehaviour {
     void Promote(GameObject piecePrefab, GameObject visualPrefab) {
         if (pendingPawn == null || piecePrefab == null) return;
 
+        // Grab everything from the pawn BEFORE destroying it
         Cell targetCell = pendingPawn.mCurrentCell;
         int spawnTurn = pendingPawn.spawnTurn;
         int turnsOnBoard = pendingPawn.turnsOnBoard;
+        Vector3 localPos = pendingPawn.transform.localPosition;
+        Transform canvasParent = pendingPawn.transform.parent;
 
-        // Remove pawn silently (no refund, no event spam)
+        // Silently remove pawn — clear cell, unregister threats, no refund
         if (targetCell != null) targetCell.mCurrentPiece = null;
+        pendingPawn.RemoveVisual();
         ThreatManager.Instance.UnregisterThreats(pendingPawn, pendingPawn.GetCurrentThreats());
         Destroy(pendingPawn.gameObject);
         pendingPawn = null;
 
-        // Spawn the chosen piece in the same canvas parent
-        Canvas canvas = FindFirstObjectByType<Canvas>();
-        GameObject newObj = Instantiate(piecePrefab, canvas.transform);
-
+        // Spawn new piece under the same parent as the pawn
+        GameObject newObj = Instantiate(piecePrefab, canvasParent);
         ChessPieces newPiece = newObj.GetComponent<ChessPieces>();
+
+        // Copy pawn's state
         newPiece.spawnTurn = spawnTurn;
         newPiece.turnsOnBoard = turnsOnBoard;
+
+        // Put it exactly where the pawn was
+        newObj.GetComponent<RectTransform>().localPosition = localPos;
 
         // Hook up visual if provided
         if (visualPrefab != null && visualParent != null) {
@@ -76,10 +87,16 @@ public class PawnPromotionUI : MonoBehaviour {
             visual.Initialize(newPiece);
         }
 
-        // Place it on the same cell the pawn was on
-        newPiece.Place(targetCell);
+        // Directly assign cell — bypass Place() so no cost/spawn checks run
+        newPiece.mCurrentCell = targetCell;
+        targetCell.mCurrentPiece = newPiece;
+        newPiece.isSelectedForUpkeep = true;
 
-        // Close popup
+        // Register threats and notify board
+        newPiece.RecalculateThreats();
+        GameManager.Instance.NotifyBoardChanged();
+
+        // Close popup and resume
         gameObject.SetActive(false);
         Time.timeScale = 1f;
     }
