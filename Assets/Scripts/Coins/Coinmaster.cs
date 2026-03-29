@@ -17,6 +17,10 @@ public class CoinMaster : MonoBehaviour {
     int _pending;
     int _total;
 
+    // Incremented every new throw so results from destroyed coins are ignored
+    int _sessionId;
+    public int CurrentSessionId => _sessionId;
+
     public event Action<int, int> OnSessionComplete;
 
     void OnEnable() {
@@ -28,6 +32,7 @@ public class CoinMaster : MonoBehaviour {
     }
 
     public void RegisterThrow(int coinCount) {
+        _sessionId++;           // invalidate any in-flight results from last throw
         coinSpawner?.ClearCoins();
         _heads = 0;
         _tails = 0;
@@ -40,7 +45,6 @@ public class CoinMaster : MonoBehaviour {
     }
 
     void HandleCoinResult(bool isHeads) {
-
         if (isHeads) _heads++;
         else _tails++;
 

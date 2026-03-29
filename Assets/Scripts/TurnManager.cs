@@ -25,23 +25,29 @@ public class TurnManager : MonoBehaviour {
                 float upkeep = piece.GetUpkeepCost();
                 if (ScoreManager.Instance.CanAfford(upkeep)) {
                     ScoreManager.Instance.SpendMoney(upkeep);
+                    piece.owedUpkeep = 0f;
                     if (!piece.isActive)
                         piece.SetActive();
                 }
                 else {
+                    // Can't afford even though they selected it — go inactive, owe the cost
+                    piece.owedUpkeep = upkeep;
                     piece.SetInactive();
                 }
             }
             else {
+                // Player didn't select upkeep — go inactive but store what they'd owe to come back
+                piece.owedUpkeep = piece.GetUpkeepCost();
                 piece.SetInactive();
             }
 
             piece.turnsOnBoard++;
-
             piece.ClearUpkeepSelection();
         }
 
         ThreatManager.Instance.RecalculateAllThreats();
+
+        TaxManager.Instance.ChargeTax();
 
         allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
         foreach (ChessPieces piece in allPieces) {

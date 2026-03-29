@@ -5,7 +5,7 @@ public class Bishop : ChessPieces {
 
     protected new void Awake() {
         base.Awake();
-        baseCost = 3f;
+        baseCost = 30f;
     }
 
     public override List<Cell> GetThreatenedCells() {
@@ -35,8 +35,8 @@ public class Bishop : ChessPieces {
             for (int i = 1; i < 5; i++) {
                 Cell cell = mCurrentCell.mBoard.GetCell(x + dx * i, y + dy * i);
                 if (cell == null) break;
-                cells.Add(cell);
                 if (cell.mCurrentPiece != null) break;
+                cells.Add(cell);
             }
         }
 

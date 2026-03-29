@@ -44,6 +44,11 @@ public class Cell : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ID
         }
     }
 
+    public void SetThreatCount(int count) {
+        mThreatCount = Mathf.Max(0, count);
+        UpdateThreatDisplay();
+    }
+
     public void AddThreat() {
         mThreatCount++;
         UpdateThreatDisplay();

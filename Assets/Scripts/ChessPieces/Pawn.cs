@@ -5,11 +5,11 @@ public class Pawn : ChessPieces {
 
     protected override void Awake() {
         base.Awake();
-        baseCost = 1f;
+        baseCost = 10f;
     }
 
     public override bool IsValidPlacement(Cell cell) {
-        if (mustMove) return true;
+        if (mustMove || _wasReactivatedThisTurn) return true;
         return cell.mBoardPosition.y == 0;
     }
 
@@ -21,10 +21,12 @@ public class Pawn : ChessPieces {
         int y = mCurrentCell.mBoardPosition.y;
 
         Cell upperLeft = mCurrentCell.mBoard.GetCell(x - 1, y + 1);
-        if (upperLeft != null) threatened.Add(upperLeft);
+        if (upperLeft != null && upperLeft.mCurrentPiece == null)
+            threatened.Add(upperLeft);
 
         Cell upperRight = mCurrentCell.mBoard.GetCell(x + 1, y + 1);
-        if (upperRight != null) threatened.Add(upperRight);
+        if (upperRight != null && upperRight.mCurrentPiece == null)
+            threatened.Add(upperRight);
 
         return threatened;
     }

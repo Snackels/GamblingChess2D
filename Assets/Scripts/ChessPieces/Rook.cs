@@ -5,7 +5,7 @@ public class Rook : ChessPieces {
 
     protected override void Awake() {
         base.Awake();
-        baseCost = 5f;
+        baseCost = 50f;
     }
 
     public override List<Cell> GetThreatenedCells() {
@@ -36,8 +36,8 @@ public class Rook : ChessPieces {
             for (int i = 1; i < 5; i++) {
                 Cell cell = mCurrentCell.mBoard.GetCell(x + dx * i, y + dy * i);
                 if (cell == null) break;
+                if (cell.mCurrentPiece != null) break;
                 cells.Add(cell);
-                if (cell.mCurrentPiece != null) break; // blocked — include the cell but stop the ray
             }
         }
 

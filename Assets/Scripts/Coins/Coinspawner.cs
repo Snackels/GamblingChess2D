@@ -68,6 +68,13 @@ public class CoinSpawner : MonoBehaviour {
             Debug.LogWarning("CoinSpawner: coinPrefab or spawnPoint not assigned.");
             return;
         }
+
+        // Block throw if player can't afford it
+        if (CoinMultiplierManager.Instance != null) {
+            if (!CoinMultiplierManager.Instance.TryRegisterThrow(coinCountToThrow))
+                return;
+        }
+
         StartCoroutine(SpawnBatch(coinCountToThrow));
     }
 
@@ -100,6 +107,10 @@ public class CoinSpawner : MonoBehaviour {
 
         GameObject coin = Instantiate(coinPrefab, pos, rot);
         _activeCoins.Add(coin);
+
+        // Stamp the coin with the current session so stale results are ignored
+        CoinResult coinResult = coin.GetComponent<CoinResult>();
+        if (coinResult != null) coinResult.Init(coinMaster);
 
         Rigidbody rb = coin.GetComponent<Rigidbody>();
         if (rb != null) {

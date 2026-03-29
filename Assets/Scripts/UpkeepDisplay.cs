@@ -35,3 +35,4 @@ public class UpkeepDisplay : MonoBehaviour {
             ScoreManager.Instance.OnTurnScoreCalculated.RemoveListener(OnTurnEnd);
     }
 }
+

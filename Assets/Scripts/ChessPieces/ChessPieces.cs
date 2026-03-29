@@ -64,6 +64,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public bool isActive = true;
     public bool isSelectedForUpkeep = false;
     public float baseCost = 0f;
+    [HideInInspector] public float owedUpkeep = 0f;  // unpaid upkeep from last end-turn
+    protected bool _wasReactivatedThisTurn = false;
 
     float pointerDownTime;
 
@@ -126,6 +128,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         OnPiecePlaced?.Invoke(this);
         GameManager.Instance.NotifyBoardChanged();
         ThreatManager.Instance.RecalculateAllThreats();
+        _wasReactivatedThisTurn = false;
         if (mustMove && previousCell != null && newCell != cellAtTurnStart) {
             SetMustMove(false);
             hasMovedThisTurn = true;
@@ -248,11 +251,42 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public void ToggleUpkeepSelection() {
         if (mCurrentCell == null) return;
+
+        // If piece is inactive and has owed upkeep, let player pay now to reactivate
+        if (!isActive) {
+            TryPayOwedUpkeep();
+            return;
+        }
+
         isSelectedForUpkeep = !isSelectedForUpkeep;
         float targetY = isSelectedForUpkeep
             ? originalPosition.y + selectedYOffset
             : originalPosition.y;
         transform.DOLocalMoveY(targetY, selectionTransition).SetEase(Ease.OutBack);
+    }
+
+    /// <summary>
+    /// Called mid-turn when a player clicks an inactive piece to pay its owed upkeep.
+    /// </summary>
+    public void TryPayOwedUpkeep() {
+        if (isActive || owedUpkeep <= 0f) return;
+        if (!ScoreManager.Instance.CanAfford(owedUpkeep)) {
+            Debug.Log($"[ChessPieces] Cannot afford upkeep {owedUpkeep} for {name}");
+            return;
+        }
+        ScoreManager.Instance.SpendMoney(owedUpkeep);
+        owedUpkeep = 0f;
+        mustMove = false;
+        hasMovedThisTurn = false;
+        cellAtTurnStart = null;
+        SetMustMove(false);
+        _wasReactivatedThisTurn = true;
+        SetActive();
+        // Mark as selected so end-of-next-turn upkeep is expected
+        isSelectedForUpkeep = true;
+        float targetY = originalPosition.y + selectedYOffset;
+        transform.DOLocalMoveY(targetY, selectionTransition).SetEase(Ease.OutBack);
+        Debug.Log($"[ChessPieces] {name} reactivated via mid-turn upkeep payment");
     }
 
     public void ClearUpkeepSelection() {
@@ -301,6 +335,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (hasMovedThisTurn) return false;
         if (mustMove) return true;
         if (spawnTurn == TurnManager.Instance.currentTurn) return true;
+        if (_wasReactivatedThisTurn) return true;
         return false;
     }
 
@@ -319,7 +354,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             ThreatManager.Instance.RecalculateAllThreats();
         }
 
-        if (mustMove) {
+        if (mustMove || _wasReactivatedThisTurn) {
             mHighlightedCells = GetValidMoveCells();
             ShowCells();
         }
@@ -349,7 +384,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (mTargetCell != null)
             mTargetCell.mOutlineImage.enabled = false;
 
-        bool isMovingOnBoard = (cellAtTurnStart != null && mustMove);
+        bool isMovingOnBoard = (cellAtTurnStart != null && mustMove) || _wasReactivatedThisTurn;
         if (isMovingOnBoard && mTargetCell != null && !mHighlightedCells.Contains(mTargetCell))
             mTargetCell = null;
 
@@ -391,6 +426,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         CancelHold();
     }
 
+    float _lastClickTime = -1f;
+    [SerializeField] float doubleClickWindow = 0.3f;
+
     public void OnPointerDown(PointerEventData eventData) {
         if (mCurrentCell == null) return;
         isHolding = true;
@@ -402,8 +440,15 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         float pointerUpTime = Time.time;
         CancelHold();
 
-        if (pointerUpTime - pointerDownTime < 0.2f && !wasDragged && mCurrentCell != null)
-            ToggleUpkeepSelection();
+        if (pointerUpTime - pointerDownTime < 0.2f && !wasDragged && mCurrentCell != null) {
+            // Check for double-click
+            if (pointerUpTime - _lastClickTime <= doubleClickWindow) {
+                _lastClickTime = -1f;
+                ToggleUpkeepSelection();
+            }
+            else {
+                _lastClickTime = pointerUpTime;
+            }
+        }
     }
 }
-
