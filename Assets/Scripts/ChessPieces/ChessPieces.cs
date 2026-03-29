@@ -276,16 +276,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         }
         ScoreManager.Instance.SpendMoney(owedUpkeep);
         owedUpkeep = 0f;
-        mustMove = false;
-        hasMovedThisTurn = false;
-        cellAtTurnStart = null;
-        SetMustMove(false);
         _wasReactivatedThisTurn = true;
         SetActive();
-        // Mark as selected so end-of-next-turn upkeep is expected
-        isSelectedForUpkeep = true;
-        float targetY = originalPosition.y + selectedYOffset;
-        transform.DOLocalMoveY(targetY, selectionTransition).SetEase(Ease.OutBack);
+        SetMustMove(true);
+        // Upkeep already paid — keep piece at normal height and deselected
+        isSelectedForUpkeep = false;
+        transform.DOLocalMoveY(originalPosition.y, selectionTransition).SetEase(Ease.OutSine);
         Debug.Log($"[ChessPieces] {name} reactivated via mid-turn upkeep payment");
     }
 
