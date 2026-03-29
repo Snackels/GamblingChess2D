@@ -104,6 +104,8 @@ public class ChessPieceVisual : MonoBehaviour {
     public void PlayDeleteAnimation(System.Action onComplete) {
         isDeleting = true;
 
+        DOTween.Kill(transform);
+
         deleteSequence = DOTween.Sequence();
 
         deleteSequence

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class TurnManager : MonoBehaviour {
     public static TurnManager Instance;
@@ -9,6 +10,12 @@ public class TurnManager : MonoBehaviour {
     }
 
     public void EndTurn() {
+        StartCoroutine(EndTurnRoutine());
+    }
+
+    IEnumerator EndTurnRoutine() {
+        yield return StartCoroutine(ScoreManager.Instance.CalculateScoreCoroutine(GameManager.Instance.mBoard));
+
         ChessPieces[] allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
         foreach (ChessPieces piece in allPieces) {
             if (piece.mCurrentCell != null && piece.mustMove)

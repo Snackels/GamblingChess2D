@@ -109,6 +109,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             spawnTurn = TurnManager.Instance.currentTurn;
 
         OnPiecePlaced?.Invoke(this);
+        GameManager.Instance.NotifyBoardChanged();
         ThreatManager.Instance.RecalculateAllThreats();
         if (mustMove && previousCell != null && newCell != cellAtTurnStart) {
             SetMustMove(false);
@@ -194,9 +195,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         ThreatManager.Instance.RecalculateAllThreats();
 
         OnPieceSold?.Invoke(this);
+        GameManager.Instance.NotifyBoardChanged();
 
-        if (chessPieceVisual != null)
+        if (chessPieceVisual != null) {
+            DOTween.Kill(chessPieceVisual.transform);
             Destroy(chessPieceVisual.gameObject);
+        }
 
         Destroy(gameObject);
     }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using DG.Tweening;
 using System.Collections;
 
@@ -9,7 +10,9 @@ public class GameManager : MonoBehaviour {
     public Board mBoard;
 
     [Header("Piece Limit")]
-    [SerializeField] public int maxPiecesOnBoard = 5;
+    [SerializeField] public int maxPiecesOnBoard = 3;
+
+    [HideInInspector] public UnityEvent OnBoardChanged;
 
     public int GetPiecesOnBoardCount() {
         int count = 0;
@@ -35,5 +38,9 @@ public class GameManager : MonoBehaviour {
         yield return new WaitForEndOfFrame();
         foreach (SpawnPoint sp in spawnPoints)
             sp.SpawnPiece();
+    }
+
+    public void NotifyBoardChanged() {
+        OnBoardChanged?.Invoke();
     }
 }
