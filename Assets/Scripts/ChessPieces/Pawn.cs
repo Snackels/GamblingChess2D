@@ -13,6 +13,14 @@ public class Pawn : ChessPieces {
         return cell.mBoardPosition.y == 0;
     }
 
+    public override void Place(Cell newCell) {
+        base.Place(newCell);
+
+        // Trigger promotion if pawn reaches the last row (y = 4 on a 5x5 board)
+        if (newCell.mBoardPosition.y == 4 && PawnPromotionUI.Instance != null)
+            PawnPromotionUI.Instance.Show(this);
+    }
+
     public override List<Cell> GetThreatenedCells() {
         List<Cell> threatened = new List<Cell>();
         if (mCurrentCell == null) return threatened;
