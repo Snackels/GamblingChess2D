@@ -18,6 +18,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [Header("Movement")]
     [SerializeField] float moveSpeedLimit = 50;
 
+    [SerializeField] float selectedYOffset = 30f;
+    [SerializeField] float selectionTransition = 0.15f;
+
     [Header("States")]
     public bool isHovering;
     public bool isDragging;
@@ -35,6 +38,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [HideInInspector] public System.Action<ChessPieces> OnPieceSold;
     [HideInInspector] public System.Action<ChessPieces> OnPiecePlaced;
 
+    [HideInInspector] public int turnsOnBoard = 0;
     [HideInInspector] public int spawnTurn = -1;
     [HideInInspector] public bool mustMove = false;
     [HideInInspector] public bool hasMovedThisTurn = false;
@@ -56,6 +60,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     bool dragAllowed = false;
     bool wasUnplacedOnDragStart = false;
+
+    public bool isActive = true;
+    public bool isSelectedForUpkeep = false;
+    public float baseCost = 0f;
+
+    float pointerDownTime;
 
     protected void ShowCells() {
         foreach (Cell cell in mHighlightedCells) {
@@ -87,8 +97,13 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public virtual void Place(Cell newCell) {
 
         Cell previousCell = mCurrentCell;
-        if (mCurrentCell != null)
-            mCurrentCell.mCurrentPiece = null;
+        if (mCurrentCell == null && spawnTurn == -1) {
+            if (!ScoreManager.Instance.CanAfford(baseCost)) {
+                transform.localPosition = originalPosition;
+                return;
+            }
+            ScoreManager.Instance.SpendMoney(baseCost);
+        }
 
         mCurrentCell = newCell;
         mCurrentCell.mCurrentPiece = this;
@@ -115,6 +130,34 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             SetMustMove(false);
             hasMovedThisTurn = true;
         }
+    }
+
+    public void RemovePiece() {
+
+        ScoreManager.Instance.AddMoney(GetRefundValue());
+
+        if (mCurrentCell != null) {
+            mCurrentCell.mCurrentPiece = null;
+            mCurrentCell = null;
+        }
+
+        mustMove = false;
+        hasMovedThisTurn = false;
+        cellAtTurnStart = null;
+        ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
+        mCurrentThreats.Clear();
+        ClearCells();
+        ThreatManager.Instance.RecalculateAllThreats();
+
+        OnPieceSold?.Invoke(this);
+        GameManager.Instance.NotifyBoardChanged();
+
+        if (chessPieceVisual != null) {
+            DOTween.Kill(chessPieceVisual.transform);
+            Destroy(chessPieceVisual.gameObject);
+        }
+
+        Destroy(gameObject);
     }
 
     public void RecalculateThreats() {
@@ -180,31 +223,6 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         }
     }
 
-    public void RemovePiece() {
-        if (mCurrentCell != null) {
-            mCurrentCell.mCurrentPiece = null;
-            mCurrentCell = null;
-        }
-
-        mustMove = false;
-        hasMovedThisTurn = false;
-        cellAtTurnStart = null;
-        ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
-        mCurrentThreats.Clear();
-        ClearCells();
-        ThreatManager.Instance.RecalculateAllThreats();
-
-        OnPieceSold?.Invoke(this);
-        GameManager.Instance.NotifyBoardChanged();
-
-        if (chessPieceVisual != null) {
-            DOTween.Kill(chessPieceVisual.transform);
-            Destroy(chessPieceVisual.gameObject);
-        }
-
-        Destroy(gameObject);
-    }
-
     void CancelHold() {
         if (!isHolding) return;
         isHolding = false;
@@ -228,6 +246,47 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         // Blank for now — will be implemented later.
     }
 
+    public void ToggleUpkeepSelection() {
+        if (mCurrentCell == null) return;
+        isSelectedForUpkeep = !isSelectedForUpkeep;
+        float targetY = isSelectedForUpkeep
+            ? originalPosition.y + selectedYOffset
+            : originalPosition.y;
+        transform.DOLocalMoveY(targetY, selectionTransition).SetEase(Ease.OutBack);
+    }
+
+    public void ClearUpkeepSelection() {
+        isSelectedForUpkeep = false;
+        transform.DOLocalMoveY(originalPosition.y, selectionTransition).SetEase(Ease.OutSine);
+    }
+
+    public void SetInactive() {
+        isActive = false;
+        ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
+        mCurrentThreats.Clear();
+        Color c = imageComponent.color;
+        c.a = 0.4f;
+        imageComponent.color = c;
+    }
+
+    public void SetActive() {
+        isActive = true;
+        Color c = imageComponent.color;
+        c.a = 0f;
+        imageComponent.color = c;
+        RecalculateThreats();
+    }
+
+    public float GetUpkeepCost() {
+        return baseCost * (0.5f + 0.25f * turnsOnBoard);
+    }
+
+    public float GetRefundValue() {
+        if (spawnTurn == TurnManager.Instance.currentTurn)
+            return baseCost;
+        return baseCost * 0.5f;
+    }
+
     void ClampPosition() {
         Vector2 canvasSize = (canvas.transform as RectTransform).sizeDelta;
         Vector3 clampedPosition = transform.localPosition;
@@ -237,6 +296,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     bool CanDrag() {
+        if (!isActive) return false;
         if (mCurrentCell == null) return true;
         if (hasMovedThisTurn) return false;
         if (mustMove) return true;
@@ -335,9 +395,15 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (mCurrentCell == null) return;
         isHolding = true;
         holdTime = 0f;
+        pointerDownTime = Time.time;
     }
 
     public void OnPointerUp(PointerEventData eventData) {
+        float pointerUpTime = Time.time;
         CancelHold();
+
+        if (pointerUpTime - pointerDownTime < 0.2f && !wasDragged && mCurrentCell != null)
+            ToggleUpkeepSelection();
     }
 }
+

@@ -5,6 +5,7 @@ public class Queen : ChessPieces {
 
     protected new void Awake() {
         base.Awake();
+        baseCost = 9f;
     }
 
     public override List<Cell> GetThreatenedCells() {

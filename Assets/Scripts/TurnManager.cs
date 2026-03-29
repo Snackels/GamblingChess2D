@@ -17,6 +17,33 @@ public class TurnManager : MonoBehaviour {
         yield return StartCoroutine(ScoreManager.Instance.CalculateScoreCoroutine(GameManager.Instance.mBoard));
 
         ChessPieces[] allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
+
+        foreach (ChessPieces piece in allPieces) {
+            if (piece.mCurrentCell == null) continue;
+
+            if (piece.isSelectedForUpkeep) {
+                float upkeep = piece.GetUpkeepCost();
+                if (ScoreManager.Instance.CanAfford(upkeep)) {
+                    ScoreManager.Instance.SpendMoney(upkeep);
+                    if (!piece.isActive)
+                        piece.SetActive();
+                }
+                else {
+                    piece.SetInactive();
+                }
+            }
+            else {
+                piece.SetInactive();
+            }
+
+            piece.turnsOnBoard++;
+
+            piece.ClearUpkeepSelection();
+        }
+
+        ThreatManager.Instance.RecalculateAllThreats();
+
+        allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
         foreach (ChessPieces piece in allPieces) {
             if (piece.mCurrentCell != null && piece.mustMove)
                 piece.Penalty();
@@ -30,7 +57,7 @@ public class TurnManager : MonoBehaviour {
 
         allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
         foreach (ChessPieces piece in allPieces) {
-            if (piece.mCurrentCell != null)
+            if (piece.mCurrentCell != null && piece.isActive)
                 piece.SetMustMove(true);
         }
     }

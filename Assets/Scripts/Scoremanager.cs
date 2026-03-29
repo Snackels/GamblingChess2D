@@ -7,10 +7,10 @@ public class ScoreManager : MonoBehaviour {
     public static ScoreManager Instance;
 
     [Header("State")]
-    public int totalMoney = 0;
+    public float totalMoney = 3f;
 
-    [HideInInspector] public UnityEvent<int> OnTurnScoreCalculated;
-    [HideInInspector] public UnityEvent<int> OnMoneyChanged;
+    [HideInInspector] public UnityEvent<float> OnTurnScoreCalculated;
+    [HideInInspector] public UnityEvent<float> OnMoneyChanged;
 
     void Awake() {
         Instance = this;
@@ -33,7 +33,7 @@ public class ScoreManager : MonoBehaviour {
                 overlapWeight += t - 1;
         }
 
-        int turnScore = totalThreatened * overlapWeight;
+        float turnScore = totalThreatened * overlapWeight;
 
         yield return null;
 
@@ -43,13 +43,13 @@ public class ScoreManager : MonoBehaviour {
         Debug.Log($"[ScoreManager] Threatened: {totalThreatened} | OverlapWeight: {overlapWeight} | Turn Score: {turnScore} | Total Money: {totalMoney}");
     }
 
-    public void AddMoney(int amount) {
+    public void AddMoney(float amount) {
         totalMoney += amount;
         OnMoneyChanged?.Invoke(totalMoney);
     }
 
 
-    public bool SpendMoney(int amount) {
+    public bool SpendMoney(float amount) {
         if (amount > totalMoney) {
             Debug.LogWarning($"[ScoreManager] Not enough money. Has: {totalMoney}, Needs: {amount}");
             return false;
@@ -59,5 +59,5 @@ public class ScoreManager : MonoBehaviour {
         return true;
     }
 
-    public bool CanAfford(int amount) => totalMoney >= amount;
+    public bool CanAfford(float amount) => totalMoney >= amount;
 }

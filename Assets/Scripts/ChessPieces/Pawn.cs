@@ -5,6 +5,7 @@ public class Pawn : ChessPieces {
 
     protected override void Awake() {
         base.Awake();
+        baseCost = 1f;
     }
 
     public override bool IsValidPlacement(Cell cell) {

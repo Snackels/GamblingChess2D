@@ -5,6 +5,7 @@ public class Bishop : ChessPieces {
 
     protected new void Awake() {
         base.Awake();
+        baseCost = 3f;
     }
 
     public override List<Cell> GetThreatenedCells() {

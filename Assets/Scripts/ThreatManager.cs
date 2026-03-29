@@ -26,7 +26,7 @@ public class ThreatManager : MonoBehaviour {
                 UnregisterThreats(piece, piece.GetCurrentThreats());
 
         foreach (ChessPieces piece in allPieces) {
-            if (piece.mCurrentCell != null) {
+            if (piece.mCurrentCell != null && piece.isActive) {
                 List<Cell> newThreats = piece.GetThreatenedCells();
                 piece.SetCurrentThreats(newThreats);
                 RegisterThreats(piece, newThreats);
