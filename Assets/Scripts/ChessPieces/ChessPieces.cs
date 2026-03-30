@@ -127,8 +127,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             spawnTurn = TurnManager.Instance.currentTurn;
 
         OnPiecePlaced?.Invoke(this);
-        GameManager.Instance.NotifyBoardChanged();
         ThreatManager.Instance.RecalculateAllThreats();
+        GameManager.Instance.NotifyBoardChanged();
         _wasReactivatedThisTurn = false;
         if (mustMove && previousCell != null && newCell != cellAtTurnStart) {
             SetMustMove(false);
@@ -315,6 +315,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public float GetUpkeepCost() {
+        // If a locked upkeep has been set (e.g. after pawn promotion), use that directly
         if (lockedUpkeep >= 0f) return lockedUpkeep;
         return baseCost * (0.25f + 0.07f * turnsOnBoard);
     }

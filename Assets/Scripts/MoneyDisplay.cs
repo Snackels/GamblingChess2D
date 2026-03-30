@@ -16,8 +16,6 @@ public class MoneyDisplay : MonoBehaviour {
     }
 
     void UpdateDisplay(float amount) {
-        tmp.text = $"{amount}";
+        tmp.text = $"{amount:F2}";
     }
 }
-
-

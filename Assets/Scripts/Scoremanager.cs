@@ -11,6 +11,7 @@ public class ScoreManager : MonoBehaviour {
 
     [HideInInspector] public UnityEvent<float> OnTurnScoreCalculated;
     [HideInInspector] public UnityEvent<float> OnMoneyChanged;
+    [HideInInspector] public UnityEvent<TurnScoreData> OnTurnScoreDetailed;
 
     void Awake() {
         Instance = this;
@@ -69,6 +70,12 @@ public class ScoreManager : MonoBehaviour {
 
         AddMoney(turnScore);
         OnTurnScoreCalculated?.Invoke(turnScore);
+        OnTurnScoreDetailed?.Invoke(new TurnScoreData {
+            squaresControlled = totalThreatened,
+            overlapWeight = overlapWeight,
+            coinMultiplier = coinMultiplier,
+            moneyEarned = turnScore
+        });
 
         Debug.Log($"[ScoreManager] Threatened: {totalThreatened} | OverlapWeight: {overlapWeight} | BaseScore: {baseScore} | CoinMult: ×{coinMultiplier} | Turn Score: {turnScore} | Total: {totalMoney}");
     }
@@ -90,4 +97,30 @@ public class ScoreManager : MonoBehaviour {
     }
 
     public bool CanAfford(float amount) => totalMoney >= amount;
+
+    public TurnScoreData GetLivePreview(Board board) {
+        int totalThreatened = 0;
+        int overlapWeight = 0;
+
+        foreach (Cell cell in board.mAllCells) {
+            if (cell == null) continue;
+            int t = cell.mThreatCount;
+            if (t <= 0) continue;
+            if (t == 1) totalThreatened++;
+            else overlapWeight += t;
+        }
+
+        if (overlapWeight == 0) overlapWeight = 1;
+
+        float coinMult = CoinMultiplierManager.Instance != null
+            ? CoinMultiplierManager.Instance.PendingMultiplier
+            : 1f;
+
+        return new TurnScoreData {
+            squaresControlled = totalThreatened,
+            overlapWeight = overlapWeight,
+            coinMultiplier = coinMult,
+            moneyEarned = totalThreatened * overlapWeight * coinMult
+        };
+    }
 }

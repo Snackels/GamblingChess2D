@@ -23,7 +23,7 @@ public class UpkeepDisplay : MonoBehaviour {
     void OnTurnEnd(float score) => UpdateDisplay();
 
     void UpdateDisplay() {
-        tmp.text = $"{piece.GetUpkeepCost():0.##}";
+        tmp.text = $"{piece.GetUpkeepCost():F2}";
     }
 
     void OnPieceSold(ChessPieces p) => tmp.enabled = false;
@@ -35,4 +35,3 @@ public class UpkeepDisplay : MonoBehaviour {
             ScoreManager.Instance.OnTurnScoreCalculated.RemoveListener(OnTurnEnd);
     }
 }
-
