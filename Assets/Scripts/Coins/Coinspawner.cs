@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
@@ -39,12 +40,52 @@ public class CoinSpawner : MonoBehaviour {
     [Header("Spawn Wobble")]
     public float spawnJitter = 0.1f;
 
+    [Header("Throw SFX")]
+    public AudioClip throwClip;
+    [Tooltip("Volume for the throw sound.")]
+    [Range(0f, 1f)]
+    public float throwVolume = 0.6f;
+    AudioSource _throwAudio;
+
+    [Header("Throw Button Lock")]
+    public Button throwButton;
+    public Button addCoinButton;
+    public Button removeCoinButton;
+
     readonly System.Collections.Generic.List<GameObject> _activeCoins = new System.Collections.Generic.List<GameObject>();
 
     bool _spawning = false;
+    bool _waitingForSettle = false;
+
+    void Awake() {
+        _throwAudio = gameObject.AddComponent<AudioSource>();
+        _throwAudio.playOnAwake = false;
+        _throwAudio.spatialBlend = 0f;
+    }
 
     void Start() {
         UpdateCountText();
+        if (coinMaster != null)
+            coinMaster.OnSessionComplete += OnCoinsSettled;
+    }
+
+    void OnDestroy() {
+        if (coinMaster != null)
+            coinMaster.OnSessionComplete -= OnCoinsSettled;
+    }
+
+    void OnCoinsSettled(int heads, int tails) {
+        _waitingForSettle = false;
+        SetThrowButtonLocked(false);
+    }
+
+    void SetThrowButtonLocked(bool locked) {
+        if (throwButton != null)
+            throwButton.interactable = !locked;
+        if (addCoinButton != null)
+            addCoinButton.interactable = !locked;
+        if (removeCoinButton != null)
+            removeCoinButton.interactable = !locked;
     }
 
     public void AddCoin() {
@@ -63,13 +104,12 @@ public class CoinSpawner : MonoBehaviour {
     }
 
     public void SpawnCoins() {
-        if (_spawning) return;
+        if (_spawning || _waitingForSettle) return;
         if (coinPrefab == null || spawnPoint == null) {
             Debug.LogWarning("CoinSpawner: coinPrefab or spawnPoint not assigned.");
             return;
         }
 
-        // Block throw if player can't afford it
         if (CoinMultiplierManager.Instance != null) {
             if (!CoinMultiplierManager.Instance.TryRegisterThrow(coinCountToThrow))
                 return;
@@ -80,6 +120,9 @@ public class CoinSpawner : MonoBehaviour {
 
     IEnumerator SpawnBatch(int count) {
         _spawning = true;
+        _waitingForSettle = true;
+        SetThrowButtonLocked(true);
+
         coinMaster?.RegisterThrow(count);
         for (int i = 0; i < count; i++) {
             SpawnSingle();
@@ -108,7 +151,9 @@ public class CoinSpawner : MonoBehaviour {
         GameObject coin = Instantiate(coinPrefab, pos, rot);
         _activeCoins.Add(coin);
 
-        // Stamp the coin with the current session so stale results are ignored
+        if (throwClip != null && _throwAudio != null)
+            _throwAudio.PlayOneShot(throwClip, throwVolume);
+
         CoinResult coinResult = coin.GetComponent<CoinResult>();
         if (coinResult != null) coinResult.Init(coinMaster);
 
@@ -132,11 +177,16 @@ public class CoinSpawner : MonoBehaviour {
         _activeCoins.Remove(coin);
     }
 
-    public void ClearCoins() {
+    public void ClearCoins(bool silent = false) {
         var copy = new System.Collections.Generic.List<GameObject>(_activeCoins);
         foreach (var coin in copy)
             if (coin != null) Destroy(coin);
         _activeCoins.Clear();
+
+        if (!silent) {
+            _waitingForSettle = false;
+            SetThrowButtonLocked(false);
+        }
     }
 
     void RemoveOldestCoin() {

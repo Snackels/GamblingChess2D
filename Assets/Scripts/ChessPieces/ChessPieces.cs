@@ -37,6 +37,9 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     [HideInInspector] public System.Action<ChessPieces> OnPieceSold;
     [HideInInspector] public System.Action<ChessPieces> OnPiecePlaced;
+    [HideInInspector] public System.Action<ChessPieces> OnSingleClick;
+    [HideInInspector] public System.Action<ChessPieces> OnDoubleClick;
+    [HideInInspector] public System.Action<ChessPieces> OnHoldComplete;
 
     [HideInInspector] public int turnsOnBoard = 0;
     [HideInInspector] public int spawnTurn = -1;
@@ -227,6 +230,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
             if (holdTime >= requiredHoldTime) {
                 isHolding = false;
+                OnHoldComplete?.Invoke(this);
                 if (mCurrentCell != null && chessPieceVisual != null)
                     chessPieceVisual.PlayDeleteAnimation(RemovePiece);
                 else if (mCurrentCell != null)
@@ -365,6 +369,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         }
 
         BeginDragEvent.Invoke(this);
+        GetComponent<ChessPieceSFX>()?.PlayPickUp();
         Vector2 mouseCanvasPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvas.transform as RectTransform,
@@ -399,7 +404,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         if (wasUnplacedOnDragStart && mTargetCell != null && GameManager.Instance.IsBoardFull())
             mTargetCell = null;
 
-        if (mTargetCell != null) { Place(mTargetCell); }
+        if (mTargetCell != null) {
+            Place(mTargetCell);
+            GetComponent<ChessPieceSFX>()?.PlayPlaced();
+        }
         else {
             if (cellAtTurnStart != null && mustMove) {
                 cellAtTurnStart.mCurrentPiece = this;
@@ -408,6 +416,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             else if (mCurrentCell != null) mCurrentCell.mCurrentPiece = this;
             transform.localPosition = originalPosition;
             ThreatManager.Instance.RecalculateAllThreats();
+            GetComponent<ChessPieceSFX>()?.PlayInvalid();
         }
 
         mTargetCell = null;
@@ -444,6 +453,10 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public void OnPointerUp(PointerEventData eventData) {
         float pointerUpTime = Time.time;
         CancelHold();
+
+        // Notify SFX component for click / double-click sounds
+        ChessPieceSFX sfx = GetComponent<ChessPieceSFX>();
+        if (sfx != null) sfx.HandlePointerUp(pointerDownTime);
 
         if (pointerUpTime - pointerDownTime < 0.2f && !wasDragged && mCurrentCell != null) {
             if (pointerUpTime - _lastClickTime <= doubleClickWindow) {

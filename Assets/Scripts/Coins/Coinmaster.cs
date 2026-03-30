@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using TMPro;
 
-
 public class CoinMaster : MonoBehaviour {
     [Header("References")]
     public CoinSpawner coinSpawner;
@@ -17,7 +16,6 @@ public class CoinMaster : MonoBehaviour {
     int _pending;
     int _total;
 
-    // Incremented every new throw so results from destroyed coins are ignored
     int _sessionId;
     public int CurrentSessionId => _sessionId;
 
@@ -32,8 +30,8 @@ public class CoinMaster : MonoBehaviour {
     }
 
     public void RegisterThrow(int coinCount) {
-        _sessionId++;           // invalidate any in-flight results from last throw
-        coinSpawner?.ClearCoins();
+        _sessionId++;
+        coinSpawner?.ClearCoins(silent: true);
         _heads = 0;
         _tails = 0;
         _pending = coinCount;
