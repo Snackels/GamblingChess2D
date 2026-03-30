@@ -65,6 +65,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public bool isSelectedForUpkeep = false;
     public float baseCost = 0f;
     [HideInInspector] public float owedUpkeep = 0f;
+    [HideInInspector] public float lockedUpkeep = -1f; // When >= 0, GetUpkeepCost returns this instead of computing from baseCost
     protected bool _wasReactivatedThisTurn = false;
 
     float pointerDownTime;
@@ -309,7 +310,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         RecalculateThreats();
     }
 
+    public void SyncOriginalPosition() {
+        originalPosition = transform.localPosition;
+    }
+
     public float GetUpkeepCost() {
+        if (lockedUpkeep >= 0f) return lockedUpkeep;
         return baseCost * (0.25f + 0.07f * turnsOnBoard);
     }
 
