@@ -7,7 +7,7 @@ public class ScoreManager : MonoBehaviour {
     public static ScoreManager Instance;
 
     [Header("State")]
-    public float totalMoney = 3f;
+    public float totalMoney = 150f;
 
     [HideInInspector] public UnityEvent<float> OnTurnScoreCalculated;
     [HideInInspector] public UnityEvent<float> OnMoneyChanged;
@@ -17,7 +17,6 @@ public class ScoreManager : MonoBehaviour {
     }
 
     public IEnumerator CalculateScoreCoroutine(Board board) {
-        // ── 1. Consume coin result (multiplier + overlap delta) ───────────────
         float coinMultiplier = 1f;
         int overlapDelta = 0;
 
@@ -25,7 +24,6 @@ public class ScoreManager : MonoBehaviour {
             (coinMultiplier, overlapDelta) = CoinMultiplierManager.Instance.ConsumeResult();
         }
 
-        // ── 2. Find highest-overlap cell and snapshot its count ───────────────
         Cell highestCell = null;
         int highestCount = 0;
 
@@ -39,7 +37,6 @@ public class ScoreManager : MonoBehaviour {
             }
         }
 
-        // ── 3. Tally base score (overlap delta applied in-calculation only) ────
         int totalThreatened = 0;
         int overlapWeight = 0;
 
@@ -48,7 +45,6 @@ public class ScoreManager : MonoBehaviour {
 
             int t = cell.mThreatCount;
 
-            // Apply overlap delta only during calculation — never touch the cell
             if (overlapDelta != 0 && cell == highestCell && highestCount > 1)
                 t = Mathf.Max(1, t + overlapDelta);
 
@@ -67,7 +63,6 @@ public class ScoreManager : MonoBehaviour {
         if (overlapDelta != 0 && highestCell != null && highestCount > 1)
             Debug.Log($"[ScoreManager] Coin overlap delta {overlapDelta:+0;-0} on highest cell ({highestCount}) → scoring only, display unchanged");
 
-        // ── 4. Apply coin multiplier ──────────────────────────────────────────
         float turnScore = baseScore * coinMultiplier;
 
         yield return null;

@@ -21,6 +21,6 @@ public class TaxDisplay : MonoBehaviour {
     void OnTurnEnd(float score) => UpdateDisplay();
 
     void UpdateDisplay() {
-        tmp.text = $"{TaxManager.Instance.GetCurrentTax():0.##}";
+        tmp.text = $"{TaxManager.Instance.GetNextTax():0.##}";
     }
 }

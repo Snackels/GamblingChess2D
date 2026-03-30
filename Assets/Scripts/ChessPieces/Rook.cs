@@ -5,7 +5,7 @@ public class Rook : ChessPieces {
 
     protected override void Awake() {
         base.Awake();
-        baseCost = 50f;
+        baseCost = 40f;
     }
 
     public override List<Cell> GetThreatenedCells() {

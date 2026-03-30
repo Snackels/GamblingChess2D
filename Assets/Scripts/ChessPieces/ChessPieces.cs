@@ -310,7 +310,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public float GetUpkeepCost() {
-        return baseCost * (0.5f + 0.25f * turnsOnBoard);
+        return baseCost * (0.25f + 0.07f * turnsOnBoard);
     }
 
     public float GetRefundValue() {

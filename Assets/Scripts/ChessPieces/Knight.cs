@@ -5,7 +5,7 @@ public class Knight : ChessPieces {
 
     protected new void Awake() {
         base.Awake();
-        baseCost = 30f;
+        baseCost = 25f;
     }
 
     public override List<Cell> GetThreatenedCells() {

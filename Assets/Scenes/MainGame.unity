@@ -2494,7 +2494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dd07b79158656e4682f31c974691064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
-  totalMoney: 100
+  totalMoney: 150
   OnTurnScoreCalculated:
     m_PersistentCalls:
       m_Calls: []
@@ -2513,7 +2513,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e70a1204f52b9484ab1ff7398470e45a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TaxManager
-  startingTax: 10
+  baseTax: 8
+  taxPerRound: 4
 --- !u!114 &966053428
 MonoBehaviour:
   m_ObjectHideFlags: 0

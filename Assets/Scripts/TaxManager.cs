@@ -5,26 +5,29 @@ using DG.Tweening;
 public class TaxManager : MonoBehaviour {
     public static TaxManager Instance;
 
-    [SerializeField] float startingTax = 4f;
-    float currentTax;
+    [SerializeField] float baseTax = 8f;
+    [SerializeField] float taxPerRound = 4f;
 
     void Awake() {
         Instance = this;
-        currentTax = startingTax;
     }
 
+    float CalculateTax(int round) => baseTax + (round * taxPerRound);
+
     public void ChargeTax() {
-        if (!ScoreManager.Instance.SpendMoney(currentTax)) {
-            Debug.Log($"[TaxManager] Can't pay tax of {currentTax} — restarting.");
+        int currentRound = TurnManager.Instance.currentTurn;
+        float tax = CalculateTax(currentRound);
+
+        if (!ScoreManager.Instance.SpendMoney(tax)) {
+            Debug.Log($"[TaxManager] Can't pay tax of {tax} — restarting.");
             DOTween.KillAll();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             return;
         }
 
-        Debug.Log($"[TaxManager] Tax charged: {currentTax}");
-        currentTax *= 1.3f;
+        Debug.Log($"[TaxManager] Tax charged: {tax}");
     }
 
-    public float GetCurrentTax() => currentTax;
-    public float GetNextTax() => currentTax * 1.3f;
+    public float GetCurrentTax() => CalculateTax(TurnManager.Instance.currentTurn);
+    public float GetNextTax() => CalculateTax(TurnManager.Instance.currentTurn + 1);
 }
