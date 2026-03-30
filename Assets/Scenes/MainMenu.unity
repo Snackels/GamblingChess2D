@@ -949,7 +949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2504f60512d2a54e86e6bc9f9221d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChangeTheScenes
-  SampleScene: SampleScene
+  SampleScene: NEWSampleSCENE
 --- !u!4 &1510804256
 Transform:
   m_ObjectHideFlags: 0
