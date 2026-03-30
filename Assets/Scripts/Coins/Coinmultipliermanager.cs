@@ -1,21 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-/// <summary>
-/// Listens to CoinMaster's OnSessionComplete and translates the heads/tails
-/// result into a score multiplier and/or an overlap-tile bonus/penalty that
-/// ScoreManager uses during the next CalculateScoreCoroutine call.
-///
-/// Wire-up:
-///   • Drag this component's GameObject into the Inspector, then assign
-///     coinMaster and scoreManager references.
-///   • CoinMaster.OnSessionComplete fires automatically after every throw.
-///
-/// Coin cost:
-///   • Each coin costs <coinCostPerThrow> money (default 10, adjustable in Inspector).
-///   • SpawnCoins() on CoinSpawner should be gated by CanAffordThrow() first,
-///     or call TrySpendCoinCost() before throwing.
-/// </summary>
 public class CoinMultiplierManager : MonoBehaviour {
     public static CoinMultiplierManager Instance;
 
@@ -27,19 +12,15 @@ public class CoinMultiplierManager : MonoBehaviour {
     [Tooltip("Money deducted per coin thrown.")]
     public float coinCostPerThrow = 10f;
 
-    // ── Pending state (set after throw, consumed during scoring) ─────────────
-    float _pendingMultiplier = 1f;   // applied to the whole turn score
-    int _pendingOverlapDelta = 0;  // added to highest-overlap cell's threat count
+    float _pendingMultiplier = 1f;
+    int _pendingOverlapDelta = 0;
 
-    // Public read-only access so ScoreManager can consume these values
     public float PendingMultiplier => _pendingMultiplier;
     public int PendingOverlapDelta => _pendingOverlapDelta;
 
-    // ── Lookup tables ─────────────────────────────────────────────────────────
-    static readonly float[] AllHeadsMultiplier = { 2f, 3f, 5f, 7f, 9f };   // index 0 = 1 coin
-    static readonly float[] AllTailsMultiplier = { 0.8f, 0.6f, 0.4f, 0.2f, 0f };
+    static readonly float[] AllHeadsMultiplier = { 1.25f, 2f, 3f, 4f, 5f };   // index 0 = 1 coin
+    static readonly float[] AllTailsMultiplier = { 0.8f, 0.7f, 0.6f, 0.5f, 0f };
 
-    // ─────────────────────────────────────────────────────────────────────────
 
     void Awake() {
         Instance = this;
@@ -55,28 +36,19 @@ public class CoinMultiplierManager : MonoBehaviour {
             coinMaster.OnSessionComplete -= HandleSessionComplete;
     }
 
-    // ── Public helpers ────────────────────────────────────────────────────────
 
-    /// <summary>Returns true if the player can afford to throw <count> coins.</summary>
     public bool CanAffordThrow(int count) {
         float cost = coinCostPerThrow * count;
         return scoreManager != null && scoreManager.CanAfford(cost);
     }
 
-    /// <summary>
-    /// Deducts the coin cost before throwing.
-    /// Returns false (and does NOT deduct) if the player cannot afford it.
-    /// </summary>
     public bool TrySpendCoinCost(int count) {
         if (scoreManager == null) return false;
         float cost = coinCostPerThrow * count;
         return scoreManager.SpendMoney(cost);
     }
 
-    /// <summary>
-    /// Called by ScoreManager.CalculateScoreCoroutine to consume and reset
-    /// the pending values.  Returns (multiplier, overlapDelta).
-    /// </summary>
+
     public (float multiplier, int overlapDelta) ConsumeResult() {
         float m = _pendingMultiplier;
         int d = _pendingOverlapDelta;
@@ -84,19 +56,11 @@ public class CoinMultiplierManager : MonoBehaviour {
         return (m, d);
     }
 
-    /// <summary>Resets to neutral (×1, no overlap change).</summary>
     public void ResetPending() {
         _pendingMultiplier = 1f;
         _pendingOverlapDelta = 0;
     }
 
-    // ── Core logic ────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Call this BEFORE spawning coins. Deducts cost and returns true if the
-    /// player can afford it. Returns false and deducts nothing if not.
-    /// Hook this up in CoinSpawner.SpawnCoins() or your throw button.
-    /// </summary>
     public bool TryRegisterThrow(int coinCount) {
         if (scoreManager == null) return false;
         float cost = coinCostPerThrow * coinCount;
@@ -132,7 +96,6 @@ public class CoinMultiplierManager : MonoBehaviour {
             return;
         }
 
-        // ── Mixed result ──────────────────────────────────────────────────────
         _pendingMultiplier = 1f;   // neutral score multiplier for mixed
 
         switch (total) {
