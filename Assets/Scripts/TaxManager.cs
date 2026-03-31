@@ -6,13 +6,13 @@ public class TaxManager : MonoBehaviour {
     [SerializeField] GameOverScreen gameOverScreen;
 
     [SerializeField] float baseTax = 8f;
-    [SerializeField] float taxPerRound = 4f;
+    [SerializeField] float taxGrowthRate = 0.3f;
 
     void Awake() {
         Instance = this;
     }
 
-    float CalculateTax(int round) => baseTax + (round * taxPerRound);
+    float CalculateTax(int round) => baseTax * Mathf.Pow(1f + taxGrowthRate, round);
 
     public void ChargeTax() {
         int currentRound = TurnManager.Instance.currentTurn;

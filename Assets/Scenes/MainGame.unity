@@ -2990,8 +2990,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TaxManager
   gameOverScreen: {fileID: 966053430}
-  baseTax: 8
-  taxPerRound: 4
+  baseTax: 12
+  taxGrowthRate: 0.3
 --- !u!114 &966053428
 MonoBehaviour:
   m_ObjectHideFlags: 0
