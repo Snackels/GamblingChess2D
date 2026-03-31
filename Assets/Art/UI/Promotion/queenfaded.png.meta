@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3f1bd1ca02fe2fa40a3ddf719f23d34e
+guid: 6c3d1540aadd51b4f9400e7daaabbcb4
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2685972729884192110
-    second: Count_0
+      213: -8067531146706037139
+    second: queenfaded_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Count_0
+      name: queenfaded_0
       rect:
         serializedVersion: 2
-        x: 143
-        y: 127
-        width: 366
-        height: 74
+        x: 915
+        y: 615
+        width: 98
+        height: 102
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e6d222987fd764520800000000000000
-      internalID: 2685972729884192110
+      spriteID: d66df2a6a2f5a0090800000000000000
+      internalID: -8067531146706037139
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Count_0: 2685972729884192110
+      queenfaded_0: -8067531146706037139
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

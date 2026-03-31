@@ -65,10 +65,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     bool wasUnplacedOnDragStart = false;
 
     public bool isActive = true;
+
     public bool isSelectedForUpkeep = false;
+
     public float baseCost = 0f;
     [HideInInspector] public float owedUpkeep = 0f;
-    [HideInInspector] public float lockedUpkeep = -1f; // When >= 0, GetUpkeepCost returns this instead of computing from baseCost
+    [HideInInspector] public float lockedUpkeep = -1f;
     protected bool _wasReactivatedThisTurn = false;
 
     float pointerDownTime;
@@ -130,13 +132,13 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
             spawnTurn = TurnManager.Instance.currentTurn;
 
         OnPiecePlaced?.Invoke(this);
-        ThreatManager.Instance.RecalculateAllThreats();
-        GameManager.Instance.NotifyBoardChanged();
         _wasReactivatedThisTurn = false;
-        if (mustMove && previousCell != null && newCell != cellAtTurnStart) {
+        if (mustMove && cellAtTurnStart != null && newCell != cellAtTurnStart) {
             SetMustMove(false);
             hasMovedThisTurn = true;
         }
+        ThreatManager.Instance.RecalculateAllThreats();
+        GameManager.Instance.NotifyBoardChanged();
     }
 
     public void RemovePiece() {
@@ -177,6 +179,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
 
     public void RecalculateThreats() {
         ThreatManager.Instance.UnregisterThreats(this, mCurrentThreats);
+        mCurrentThreats.Clear();
+        if (!isActive || mustMove) return;
         mCurrentThreats = GetThreatenedCells();
         ThreatManager.Instance.RegisterThreats(this, mCurrentThreats);
     }
@@ -259,6 +263,12 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public virtual void Penalty() {
+        isActive = true;
+        Color col = imageComponent.color;
+        col.a = 0f;
+        imageComponent.color = col;
+        _wasReactivatedThisTurn = true;
+        SetMustMove(true);
     }
 
     public void ToggleUpkeepSelection() {
@@ -319,7 +329,6 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     public float GetUpkeepCost() {
-        // If a locked upkeep has been set (e.g. after pawn promotion), use that directly
         if (lockedUpkeep >= 0f) return lockedUpkeep;
         return baseCost * (0.25f + 0.07f * turnsOnBoard);
     }
@@ -339,8 +348,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     }
 
     bool CanDrag() {
-        if (!isActive) return false;
         if (mCurrentCell == null) return true;
+        if (!isActive) return false;
         if (hasMovedThisTurn) return false;
         if (mustMove) return true;
         if (spawnTurn == TurnManager.Instance.currentTurn) return true;
@@ -454,7 +463,6 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         float pointerUpTime = Time.time;
         CancelHold();
 
-        // Notify SFX component for click / double-click sounds
         ChessPieceSFX sfx = GetComponent<ChessPieceSFX>();
         if (sfx != null) sfx.HandlePointerUp(pointerDownTime);
 

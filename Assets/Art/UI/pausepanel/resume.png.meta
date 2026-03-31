@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 3f1bd1ca02fe2fa40a3ddf719f23d34e
+guid: c6116754815fd394c9062a2b1312b6f8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2685972729884192110
-    second: Count_0
+      213: -6450244300066960991
+    second: resume_0
+  - first:
+      213: -2600156982663379757
+    second: resume_1
+  - first:
+      213: 4413668017680353865
+    second: resume_2
+  - first:
+      213: 6658810768773810568
+    second: resume_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +122,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Count_0
+      name: resume_2
       rect:
         serializedVersion: 2
-        x: 143
-        y: 127
-        width: 366
-        height: 74
+        x: 419
+        y: 691
+        width: 558
+        height: 142
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e6d222987fd764520800000000000000
-      internalID: 2685972729884192110
+      spriteID: 94a075e6daf704d30800000000000000
+      internalID: 4413668017680353865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: resume_3
+      rect:
+        serializedVersion: 2
+        x: 2339
+        y: 691
+        width: 558
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8890f434d19d86c50800000000000000
+      internalID: 6658810768773810568
       vertices: []
       indices: 
       edges: []
@@ -138,7 +169,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: b567d75ed7d5e0d428f6fdbe0b6e6834
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +179,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Count_0: 2685972729884192110
+      resume_0: -6450244300066960991
+      resume_1: -2600156982663379757
+      resume_2: 4413668017680353865
+      resume_3: 6658810768773810568
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

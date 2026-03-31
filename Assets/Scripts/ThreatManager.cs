@@ -21,12 +21,16 @@ public class ThreatManager : MonoBehaviour {
     public void RecalculateAllThreats() {
         ChessPieces[] allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
 
-        foreach (ChessPieces piece in allPieces)
-            if (piece.mCurrentCell != null)
+        foreach (ChessPieces piece in allPieces) {
+            if (piece.mCurrentCell != null) {
                 UnregisterThreats(piece, piece.GetCurrentThreats());
+                if (!piece.isActive || piece.mustMove)
+                    piece.SetCurrentThreats(new List<Cell>());
+            }
+        }
 
         foreach (ChessPieces piece in allPieces) {
-            if (piece.mCurrentCell != null && piece.isActive) {
+            if (piece.mCurrentCell != null && piece.isActive && !piece.mustMove) {
                 List<Cell> newThreats = piece.GetThreatenedCells();
                 piece.SetCurrentThreats(newThreats);
                 RegisterThreats(piece, newThreats);
@@ -34,5 +38,3 @@ public class ThreatManager : MonoBehaviour {
         }
     }
 }
-
-

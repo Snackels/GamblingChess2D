@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TurnManager : MonoBehaviour {
     public static TurnManager Instance;
@@ -26,17 +27,14 @@ public class TurnManager : MonoBehaviour {
                 if (ScoreManager.Instance.CanAfford(upkeep)) {
                     ScoreManager.Instance.SpendMoney(upkeep);
                     piece.owedUpkeep = 0f;
-                    if (!piece.isActive)
-                        piece.SetActive();
+                    if (!piece.isActive) piece.SetActive();
                 }
                 else {
-                    // Can't afford even though they selected it — go inactive, owe the cost
                     piece.owedUpkeep = upkeep;
                     piece.SetInactive();
                 }
             }
             else {
-                // Player didn't select upkeep — go inactive but store what they'd owe to come back
                 piece.owedUpkeep = piece.GetUpkeepCost();
                 piece.SetInactive();
             }
@@ -49,9 +47,11 @@ public class TurnManager : MonoBehaviour {
 
         TaxManager.Instance.ChargeTax();
 
-        allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
+        currentTurn++;
+
         foreach (ChessPieces piece in allPieces) {
-            if (piece.mCurrentCell != null && piece.mustMove)
+            if (piece.mCurrentCell == null) continue;
+            if (piece.mustMove && !piece.hasMovedThisTurn)
                 piece.Penalty();
         }
 
@@ -59,12 +59,10 @@ public class TurnManager : MonoBehaviour {
         foreach (SpawnPoint sp in spawnPoints)
             sp.SpawnPiece();
 
-        currentTurn++;
-
         allPieces = FindObjectsByType<ChessPieces>(FindObjectsSortMode.None);
         foreach (ChessPieces piece in allPieces) {
-            if (piece.mCurrentCell != null && piece.isActive)
-                piece.SetMustMove(true);
+            if (piece.mCurrentCell == null) continue;
+            piece.SetMustMove(true);
         }
     }
 }

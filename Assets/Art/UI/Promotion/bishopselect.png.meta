@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 3f1bd1ca02fe2fa40a3ddf719f23d34e
+guid: f7f9b13d1b0af1046bb6d166daeeff38
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2685972729884192110
-    second: Count_0
+      213: 7140001834778824031
+    second: bishopselect_0
+  - first:
+      213: -724508887461818258
+    second: bishopselect_1
+  - first:
+      213: 2912854419054694871
+    second: bishopselect_2
+  - first:
+      213: -2165830470868523443
+    second: bishopselect_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +122,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Count_0
+      name: bishopselect_0
       rect:
         serializedVersion: 2
-        x: 143
-        y: 127
-        width: 366
-        height: 74
+        x: 955
+        y: 595
+        width: 114
+        height: 130
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +137,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e6d222987fd764520800000000000000
-      internalID: 2685972729884192110
+      spriteID: f5d01a1e6d1661360800000000000000
+      internalID: 7140001834778824031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bishopselect_1
+      rect:
+        serializedVersion: 2
+        x: 2875
+        y: 595
+        width: 114
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e609936610702f5f0800000000000000
+      internalID: -724508887461818258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bishopselect_2
+      rect:
+        serializedVersion: 2
+        x: 4795
+        y: 595
+        width: 114
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d19e2249a98c6820800000000000000
+      internalID: 2912854419054694871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bishopselect_3
+      rect:
+        serializedVersion: 2
+        x: 1027
+        y: 579
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d462a2c69ac61f1e0800000000000000
+      internalID: -2165830470868523443
       vertices: []
       indices: 
       edges: []
@@ -148,7 +223,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Count_0: 2685972729884192110
+      bishopselect_0: 7140001834778824031
+      bishopselect_1: -724508887461818258
+      bishopselect_2: 2912854419054694871
+      bishopselect_3: -2165830470868523443
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

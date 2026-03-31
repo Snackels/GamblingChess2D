@@ -18,7 +18,7 @@ public class CoinMultiplierManager : MonoBehaviour {
     public float PendingMultiplier => _pendingMultiplier;
     public int PendingOverlapDelta => _pendingOverlapDelta;
 
-    static readonly float[] AllHeadsMultiplier = { 1.25f, 2f, 3f, 4f, 5f };   // index 0 = 1 coin
+    static readonly float[] AllHeadsMultiplier = { 1.25f, 2f, 3f, 4f, 5f };   
     static readonly float[] AllTailsMultiplier = { 0.8f, 0.7f, 0.6f, 0.5f, 0f };
 
 

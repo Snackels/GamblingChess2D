@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 3f1bd1ca02fe2fa40a3ddf719f23d34e
+guid: 707226fe6f0e9a243ace7aad0103c92f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2685972729884192110
-    second: Count_0
+      213: 3556010288664480796
+    second: restartpause_0
+  - first:
+      213: -912642932826026916
+    second: restartpause_1
+  - first:
+      213: 186336329310082417
+    second: restartpause_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +119,45 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Count_0
+      name: restartpause_1
       rect:
         serializedVersion: 2
-        x: 143
-        y: 127
-        width: 366
-        height: 74
+        x: 415
+        y: 343
+        width: 558
+        height: 142
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e6d222987fd764520800000000000000
-      internalID: 2685972729884192110
+      spriteID: c5c42268614a553f0800000000000000
+      internalID: -912642932826026916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: restartpause_2
+      rect:
+        serializedVersion: 2
+        x: 2335
+        y: 343
+        width: 558
+        height: 110
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 175174d77eff59200800000000000000
+      internalID: 186336329310082417
       vertices: []
       indices: 
       edges: []
@@ -138,7 +166,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: b8f896468f1ba1a418813fe554b03609
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +176,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Count_0: 2685972729884192110
+      restartpause_0: 3556010288664480796
+      restartpause_1: -912642932826026916
+      restartpause_2: 186336329310082417
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

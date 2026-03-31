@@ -4,6 +4,7 @@ using System;
 
 public class UpkeepDisplay : MonoBehaviour {
     [SerializeField] ChessPieces piece;
+    public ChessPieces Piece => piece;
     TextMeshProUGUI tmp;
 
     public event Action<float> OnUpkeepChanged;
