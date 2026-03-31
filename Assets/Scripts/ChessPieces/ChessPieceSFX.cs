@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Add to the same GameObject as ChessPieces.
-/// Assign clips in the Inspector — any empty slot is silently skipped.
-/// </summary>
 [RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(ChessPieces))]
 public class ChessPieceSFX : MonoBehaviour {
@@ -47,13 +43,11 @@ public class ChessPieceSFX : MonoBehaviour {
         _piece.OnHoldComplete -= p => Play(holdCompleteClip);
     }
 
-    // ── Called directly from ChessPieces ─────────────────────────────────────
 
     public void PlayPickUp() => Play(pickUpClip);
     public void PlayPlaced() => Play(placedClip);
     public void PlayInvalid() => Play(invalidPlacementClip);
 
-    // ── Called from ChessPieces.OnPointerUp ──────────────────────────────────
 
     float _lastClickSoundTime = -1f;
 
@@ -74,7 +68,6 @@ public class ChessPieceSFX : MonoBehaviour {
         }
     }
 
-    // ── Playback ──────────────────────────────────────────────────────────────
 
     void Play(AudioClip clip) {
         if (clip == null || _audio == null) return;

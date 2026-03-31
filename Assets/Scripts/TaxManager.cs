@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using DG.Tweening;
 
 public class TaxManager : MonoBehaviour {
     public static TaxManager Instance;
+    [SerializeField] GameOverScreen gameOverScreen;
 
     [SerializeField] float baseTax = 8f;
     [SerializeField] float taxPerRound = 4f;
@@ -21,7 +21,7 @@ public class TaxManager : MonoBehaviour {
         if (!ScoreManager.Instance.SpendMoney(tax)) {
             Debug.Log($"[TaxManager] Can't pay tax of {tax} — restarting.");
             DOTween.KillAll();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            gameOverScreen.GameOver();
             return;
         }
 

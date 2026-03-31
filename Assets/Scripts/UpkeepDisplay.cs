@@ -1,9 +1,13 @@
 using TMPro;
 using UnityEngine;
+using System;
 
 public class UpkeepDisplay : MonoBehaviour {
     [SerializeField] ChessPieces piece;
     TextMeshProUGUI tmp;
+
+    public event Action<float> OnUpkeepChanged;
+    public float CurrentUpkeep { get; private set; }
 
     void Awake() {
         tmp = GetComponent<TextMeshProUGUI>();
@@ -23,10 +27,16 @@ public class UpkeepDisplay : MonoBehaviour {
     void OnTurnEnd(float score) => UpdateDisplay();
 
     void UpdateDisplay() {
-        tmp.text = $"{piece.GetUpkeepCost():F2}";
+        CurrentUpkeep = piece.GetUpkeepCost();
+        tmp.text = $"{CurrentUpkeep:0.##}";
+        OnUpkeepChanged?.Invoke(CurrentUpkeep);
     }
 
-    void OnPieceSold(ChessPieces p) => tmp.enabled = false;
+    void OnPieceSold(ChessPieces p) {
+        tmp.enabled = false;
+        CurrentUpkeep = 0f;
+        OnUpkeepChanged?.Invoke(0f);
+    }
 
     void OnDestroy() {
         piece.OnPiecePlaced -= OnPiecePlaced;
@@ -35,4 +45,3 @@ public class UpkeepDisplay : MonoBehaviour {
             ScoreManager.Instance.OnTurnScoreCalculated.RemoveListener(OnTurnEnd);
     }
 }
-

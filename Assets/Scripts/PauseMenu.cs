@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour {
     [Header("References")]
-    [SerializeField] GameObject pausePopup;   // drag your popup panel here
+    [SerializeField] GameObject pausePopup;
     [SerializeField] string mainMenuScene = "MainMenu";
     [SerializeField] string gameScene = "SampleScene";
 
