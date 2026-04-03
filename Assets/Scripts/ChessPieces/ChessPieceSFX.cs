@@ -55,7 +55,6 @@ public class ChessPieceSFX : MonoBehaviour {
         float now = Time.time;
         if (now - pointerDownTime >= 0.2f) return;
         if (_piece.wasDragged) return;
-        if (_piece.mCurrentCell == null) return;
 
         float doubleClickWindow = 0.3f;
         if (now - _lastClickSoundTime <= doubleClickWindow) {

@@ -30,8 +30,6 @@ public class SpawnPoint : MonoBehaviour {
         waitingPiece = piece;
 
         ChessPieces capturedWaiting = piece;
-        capturedWaiting.OnPiecePlaced = (placedPiece) => OnWaitingPiecePlaced(capturedWaiting);
-        capturedWaiting.OnPieceSold = (soldPiece) => OnPieceSold(soldPiece);
     }
 
     void OnWaitingPiecePlaced(ChessPieces piece) {
@@ -41,23 +39,6 @@ public class SpawnPoint : MonoBehaviour {
         piece.OnPiecePlaced = null;
     }
 
-    void OnPieceSold(ChessPieces soldPiece) {
-        bool wasWaiting = soldPiece == waitingPiece;
-        bool wasActive = soldPiece == activePiece;
-
-        if (wasWaiting) waitingPiece = null;
-        if (wasActive) activePiece = null;
-
-        int spawnTurn = soldPiece != null ? soldPiece.spawnTurn : -1;
-
-        if (wasWaiting) {
-            StartCoroutine(SpawnNextFrame());
-            return;
-        }
-
-        if (wasActive && spawnTurn == TurnManager.Instance.currentTurn)
-            StartCoroutine(SpawnNextFrame());
-    }
 
     IEnumerator SpawnNextFrame() {
         yield return null;
