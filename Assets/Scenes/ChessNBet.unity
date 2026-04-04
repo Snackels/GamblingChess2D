@@ -298,6 +298,17 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  PointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  PointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  SelectedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isSelected: 0
+  selectionOffset: 30
   bishopVisual: {fileID: 180891264}
 --- !u!1 &180891263
 GameObject:
@@ -354,7 +365,7 @@ Transform:
   m_GameObject: {fileID: 180891263}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.77806, y: 0.13682, z: 0}
+  m_LocalPosition: {x: -3.61, y: -3.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -665,7 +676,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 93961e268ae3ed3408ec551f967f9007, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.35
+      value: -0.381
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 93961e268ae3ed3408ec551f967f9007, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1444,6 +1455,17 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  PointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  PointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  SelectedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isSelected: 0
+  selectionOffset: 30
   queenVisual: {fileID: 1733015631}
 --- !u!1 &952257260
 GameObject:
@@ -1592,6 +1614,17 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  PointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  PointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  SelectedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isSelected: 0
+  selectionOffset: 30
   pawnVisual: {fileID: 1926310299}
 --- !u!1 &966053420
 GameObject:
@@ -2369,7 +2402,7 @@ Transform:
   m_GameObject: {fileID: 1691803716}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.77806, y: 0.13682, z: 0}
+  m_LocalPosition: {x: -2.62, y: -3.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2425,6 +2458,17 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  PointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  PointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  SelectedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isSelected: 0
+  selectionOffset: 30
   rookVisual: {fileID: 1691803717}
 --- !u!114 &1698277201
 MonoBehaviour:
@@ -2579,7 +2623,7 @@ Transform:
   m_GameObject: {fileID: 1733015630}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.77806, y: 0.13682, z: 0}
+  m_LocalPosition: {x: -1.533, y: -3.217, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2710,7 +2754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 410324b8867dbf3418a6248986c81183, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.071
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 410324b8867dbf3418a6248986c81183, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2821,7 +2865,7 @@ Transform:
   m_GameObject: {fileID: 1881061877}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.77806, y: 0.13682, z: 0}
+  m_LocalPosition: {x: -4.63, y: -3.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -2882,6 +2926,17 @@ MonoBehaviour:
   EndDragEvent:
     m_PersistentCalls:
       m_Calls: []
+  PointerUpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  PointerDownEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  SelectedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  isSelected: 0
+  selectionOffset: 30
   knightVisual: {fileID: 1881061878}
 --- !u!114 &1911355896
 MonoBehaviour:
@@ -3036,7 +3091,7 @@ Transform:
   m_GameObject: {fileID: 1926310298}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.77806, y: 0.13682, z: 0}
+  m_LocalPosition: {x: -5.69, y: -3.226, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:

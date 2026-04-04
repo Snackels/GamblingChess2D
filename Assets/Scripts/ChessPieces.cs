@@ -6,13 +6,13 @@ using System.Collections;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
-public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler {
+public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, IPointerDownHandler {
     protected Canvas canvas;
     protected Image imageComponent;
     protected Vector3 offset;
 
     [Header("Movement")]
-    [SerializeField] private float moveSpeedLimit = 50;
+    [SerializeField] float moveSpeedLimit = 30;
 
     [Header("States")]
     public bool isHovering;
@@ -27,8 +27,15 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     [HideInInspector] public UnityEvent<ChessPieces> PointerExitEvent;
     [HideInInspector] public UnityEvent<ChessPieces> BeginDragEvent;
     [HideInInspector] public UnityEvent<ChessPieces> EndDragEvent;
+    [HideInInspector] public UnityEvent<ChessPieces, bool> PointerUpEvent;
+    [HideInInspector] public UnityEvent<ChessPieces> PointerDownEvent;
+    [HideInInspector] public UnityEvent<ChessPieces, bool> SelectedEvent;
 
-    private Vector3 originalPosition;
+    [Header("Selection")]
+    public bool isSelected;
+    public float selectionOffset = 50f;
+
+    protected Vector3 originalPosition;
 
     protected void Awake() {
         canvas = GetComponentInParent<Canvas>();
@@ -49,17 +56,8 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
         ClampPosition();
         if (isDragging) {
             Vector2 targetPosition;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvas.transform as RectTransform,
-                Mouse.current.position.ReadValue(),
-                canvas.worldCamera,
-                out targetPosition
-            );
-            transform.localPosition = Vector2.Lerp(
-                transform.localPosition,
-                targetPosition - (Vector2)offset,
-                moveSpeedLimit * Time.deltaTime
-            );
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, Mouse.current.position.ReadValue(), canvas.worldCamera, out targetPosition);
+            transform.localPosition = Vector2.Lerp(transform.localPosition, targetPosition - (Vector2)offset, moveSpeedLimit * Time.deltaTime);
         }
     }
 
@@ -74,12 +72,7 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public void OnBeginDrag(PointerEventData eventData) {
         BeginDragEvent.Invoke(this);
         Vector2 mouseCanvasPos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            canvas.transform as RectTransform,
-            eventData.position,
-            eventData.pressEventCamera,
-            out mouseCanvasPos
-        );
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas.transform as RectTransform, eventData.position, eventData.pressEventCamera, out mouseCanvasPos);
         offset = mouseCanvasPos - (Vector2)transform.localPosition;
         isDragging = true;
         canvas.GetComponent<GraphicRaycaster>().enabled = false;
@@ -110,5 +103,31 @@ public class ChessPieces : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndD
     public void OnPointerExit(PointerEventData eventData) {
         PointerExitEvent.Invoke(this);
         isHovering = false;
+    }
+
+    public void OnPointerDown(PointerEventData eventData) {
+        PointerDownEvent.Invoke(this);
+    }
+
+    public void OnPointerUp(PointerEventData eventData) {
+        PointerUpEvent.Invoke(this, !wasDragged);
+
+        if (!wasDragged) {
+            isSelected = !isSelected;
+            SelectedEvent.Invoke(this, isSelected);
+
+            if (isSelected)
+                transform.localPosition += Vector3.up * selectionOffset;
+            else
+                transform.localPosition = originalPosition;
+        }
+    }
+
+    public void Deselect() {
+        if (isSelected) {
+            isSelected = false;
+            SelectedEvent.Invoke(this, false);
+            transform.localPosition = originalPosition;
+        }
     }
 }
