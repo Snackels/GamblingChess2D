@@ -3518,8 +3518,24 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -8183637082203717178, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 13400000, guid: 5adae26d50f3bfb4d9df72b15d4f3fa3, type: 2}
+    - target: {fileID: 3930171489014103160, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
+      propertyPath: _gravity
+      value: 9.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814117799173556936, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
+      propertyPath: m_Mass
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 5814117799173556936, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
       propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5814117799173556936, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
+      propertyPath: m_Interpolate
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5814117799173556936, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
