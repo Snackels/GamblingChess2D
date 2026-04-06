@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalScale.x
-      value: 40
+      value: 0.39999998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalScale.y
-      value: 40
+      value: 0.39999998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalScale.z
-      value: 40
+      value: 0.39999998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30,7 +30,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalRotation.w
@@ -98,7 +98,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7880288470923921813}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: fe6a0342fee909244b9a68d8d5a7624f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -110,9 +110,9 @@ MeshCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 5
-  m_Convex: 0
+  m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -725012648089265939, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
+  m_Mesh: {fileID: 2534964839176971238, guid: afa264b0f995d674a997f02c27f8d0ff, type: 3}
 --- !u!54 &5814117799173556936
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -121,7 +121,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7880288470923921813}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 0.015
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -135,11 +135,11 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &3930171489014103160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,4 +152,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b316a79e5843e442904899ecb78133e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinGravity
-  _gravity: 1
+  _gravity: 9.81
