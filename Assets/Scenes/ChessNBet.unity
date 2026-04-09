@@ -556,7 +556,7 @@ MonoBehaviour:
       m_Calls: []
   isSelected: 0
   selectionOffset: 50
-  coinVisual: {fileID: 0}
+  coinVisual: {fileID: 1656508940}
 --- !u!114 &223067479
 MonoBehaviour:
   m_ObjectHideFlags: 0
