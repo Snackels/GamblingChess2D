@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(CoinController))]
-public class Coin : MonoBehaviour {
+public class CoinPhysics : MonoBehaviour {
 
     float _gravity;
     float _maxFallSpeed = 150f;
