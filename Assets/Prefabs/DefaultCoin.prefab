@@ -81,10 +81,10 @@ PrefabInstance:
       addedObject: {fileID: -8183637082203717178}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5814117799173556936}
+      addedObject: {fileID: 4019182088471097136}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3930171489014103160}
+      addedObject: {fileID: 5571429768096696955}
   m_SourcePrefab: {fileID: 100100000, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
 --- !u!1 &7880288470923921813 stripped
 GameObject:
@@ -113,34 +113,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2534964839176971238, guid: afa264b0f995d674a997f02c27f8d0ff, type: 3}
---- !u!54 &5814117799173556936
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7880288470923921813}
-  serializedVersion: 5
-  m_Mass: 0.015
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 1
-  m_Constraints: 0
-  m_CollisionDetection: 1
---- !u!114 &3930171489014103160
+--- !u!114 &4019182088471097136
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -149,7 +122,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 7880288470923921813}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b316a79e5843e442904899ecb78133e, type: 3}
+  m_Script: {fileID: 11500000, guid: ba20e15be1ab7c54795dd31f2f3c8f8b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CoinGravity
-  _gravity: 9.81
+  m_EditorClassIdentifier: Assembly-CSharp::Coin
+--- !u!114 &5571429768096696955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7880288470923921813}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1fca90876a10b24dacf57b44a409473, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoinController
+  _rayLength: 0.5
