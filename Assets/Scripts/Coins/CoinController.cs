@@ -19,6 +19,7 @@ public class CoinController : MonoBehaviour {
     Vector3 _edgeAxisX;
     Vector3 _edgeAxisZ;
 
+    int _edgeRayCount;
     float _edgeAngleSpacing;
 
     void Awake() {
@@ -30,6 +31,13 @@ public class CoinController : MonoBehaviour {
 
     void Start() {
         DeriveCoinGeometry(verts, scale);
+        CalculateRaySpacing();
+    }
+
+    void Update() {
+        CastEdgeRays();
+        CastRimRays();
+        CastFaceRays();
     }
 
     void DeriveCoinGeometry(Vector3[] verts, Vector3 scale) {
@@ -74,5 +82,77 @@ public class CoinController : MonoBehaviour {
         }
 
         _radius = Mathf.Max(spanX, spanY, spanZ) * 0.5f;
+    }
+
+    void CalculateRaySpacing() {
+        float circumference = 2 * Mathf.PI * (_radius - SKINWIDTH);
+        _edgeRayCount = Mathf.Max(4, Mathf.RoundToInt(circumference / DISTANCEBETWEENRAYS));
+        _edgeAngleSpacing = 360f / _edgeRayCount;
+    }
+
+    void CastEdgeRays() {
+        Vector3 center = transform.position;
+        float innerEdgeRadius = _radius - SKINWIDTH;
+
+        for (int i = 0; i < _edgeRayCount; i++) {
+            float angle = i * _edgeAngleSpacing * Mathf.Deg2Rad;
+            Vector3 rayDirection = Mathf.Cos(angle) * _edgeAxisX + Mathf.Sin(angle) * _edgeAxisZ;
+            Vector3 rayOrigin = center + rayDirection * innerEdgeRadius;
+
+            if (Physics.Raycast(rayOrigin, rayDirection, out RaycastHit hit, _rayLength)) {
+                Debug.Log("Edge hit: " + hit.collider.name);
+            }
+
+            Debug.DrawRay(rayOrigin, rayDirection * _rayLength, Color.green);
+        }
+    }
+
+    void CastRimRays() {
+        Vector3 center = transform.position;
+        float halfHeight = (_height * 0.5f) - SKINWIDTH;
+        float innerRim = _radius - SKINWIDTH;
+
+        for (int i = 0; i < _edgeRayCount; i++) {
+            float angle = i * _edgeAngleSpacing * Mathf.Deg2Rad;
+            Vector3 rayDirection = Mathf.Cos(angle) * _edgeAxisX + Mathf.Sin(angle) * _edgeAxisZ;
+
+            Vector3 originTop = center + rayDirection * innerRim + _faceAxis * halfHeight;
+            Vector3 originBottom = center + rayDirection * innerRim - _faceAxis * halfHeight;
+
+            Vector3 dirTop = (rayDirection + _faceAxis).normalized;
+            Vector3 dirBottom = (rayDirection - _faceAxis).normalized;
+
+            if (Physics.Raycast(originTop, dirTop, out RaycastHit hitTop, _rayLength))
+                Debug.Log("Rim top hit: " + hitTop.collider.name);
+
+            if (Physics.Raycast(originBottom, dirBottom, out RaycastHit hitBottom, _rayLength))
+                Debug.Log("Rim bottom hit: " + hitBottom.collider.name);
+
+            Debug.DrawRay(originTop, dirTop * _rayLength, Color.blue);
+            Debug.DrawRay(originBottom, dirBottom * _rayLength, Color.blue);
+        }
+    }
+
+    void CastFaceRays() {
+        Vector3 center = transform.position;
+        float halfHeight = (_height * 0.5f) - SKINWIDTH;
+        float innerRim = _radius - SKINWIDTH;
+
+        for (int i = 0; i < _edgeRayCount; i++) {
+            float angle = i * _edgeAngleSpacing * Mathf.Deg2Rad;
+            Vector3 rayDirection = Mathf.Cos(angle) * _edgeAxisX + Mathf.Sin(angle) * _edgeAxisZ;
+
+            Vector3 originTop = center + rayDirection * innerRim + _faceAxis * halfHeight;
+            Vector3 originBottom = center + rayDirection * innerRim - _faceAxis * halfHeight;
+
+            if (Physics.Raycast(originTop, _faceAxis, out RaycastHit hitTop, _rayLength))
+                Debug.Log("Face top hit: " + hitTop.collider.name);
+
+            if (Physics.Raycast(originBottom, -_faceAxis, out RaycastHit hitBottom, _rayLength))
+                Debug.Log("Face bottom hit: " + hitBottom.collider.name);
+
+            Debug.DrawRay(originTop, _faceAxis * _rayLength, Color.yellow);
+            Debug.DrawRay(originBottom, -_faceAxis * _rayLength, Color.yellow);
+        }
     }
 }
