@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.39999998
+      value: 0.20000002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.39999998
+      value: 0.20000002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.39999998
+      value: 0.20000002
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       propertyPath: m_LocalPosition.x
@@ -84,7 +84,7 @@ PrefabInstance:
       addedObject: {fileID: 4019182088471097136}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5571429768096696955}
+      addedObject: {fileID: 8308112177867740059}
   m_SourcePrefab: {fileID: 100100000, guid: 65e11d21c88c13d43b3dad5d09795251, type: 3}
 --- !u!1 &7880288470923921813 stripped
 GameObject:
@@ -125,16 +125,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba20e15be1ab7c54795dd31f2f3c8f8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Coin
---- !u!114 &5571429768096696955
-MonoBehaviour:
+  _gravity: 9.81
+  _maxAngularVelocity: 30
+--- !u!54 &8308112177867740059
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7880288470923921813}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1fca90876a10b24dacf57b44a409473, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CoinController
-  _rayLength: 0.5
+  serializedVersion: 5
+  m_Mass: 0.03
+  m_LinearDamping: 0.08
+  m_AngularDamping: 0.5
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 1
