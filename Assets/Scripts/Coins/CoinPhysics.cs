@@ -1,3 +1,5 @@
+using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -14,6 +16,7 @@ public class CoinPhysics : MonoBehaviour {
     float _radius;
 
     Vector3 _faceNormal;
+    Vector3 _floorNormal;
     float _I1;
     float _I3;
 
@@ -25,6 +28,23 @@ public class CoinPhysics : MonoBehaviour {
     [SerializeField] float _gravity = 9.81f;
     [SerializeField] float _maxAngularVelocity = 50f;
     [SerializeField] float _maxTiltDelta = 10f;
+
+    [SerializeField] float _wobbleDuration = 1.5f;
+    float _wobbleStartTime;
+    float _initialTiltAngle;
+    float _initialSpin;
+
+    Vector3 _precessionAxis;
+
+    enum State {
+        AirBorne,
+        Bouncing,
+        Grounded,
+        EulerWobble,
+        Settled
+    };
+
+    State _state;
 
     void Awake() {
         _rigidbody = GetComponent<Rigidbody>();
@@ -41,8 +61,7 @@ public class CoinPhysics : MonoBehaviour {
 
         _faceNormal = transform.right;
 
-        _I1 = (0.25f * _rigidbody.mass * _radius * _radius)
-            + (1f / 12f * _rigidbody.mass * _height * _height);
+        _I1 = (0.25f * _rigidbody.mass * _radius * _radius) + (1f / 12f * _rigidbody.mass * _height * _height);
         _I3 = 0.5f * _rigidbody.mass * _radius * _radius;
 
         _rigidbody.inertiaTensor = new Vector3(_I1, _I1, _I3);
@@ -73,8 +92,58 @@ public class CoinPhysics : MonoBehaviour {
             Quaternion deltaRotation = Quaternion.FromToRotation(transform.right, _faceNormal);
             _rigidbody.MoveRotation(deltaRotation * _rigidbody.rotation);
         }
-
         Gravity();
+    }
+
+    void UpdateState() {
+        switch (_state) {
+            case State.AirBorne:
+                AirBorne();
+                break;
+        }
+    }
+
+    void AirBorne() {
+        throw new NotImplementedException();
+    }
+
+    void EnterEulerWobble() {
+        _initialSpin = Vector3.Dot(_faceNormal, _rigidbody.angularVelocity);
+
+        _rigidbody.linearVelocity = Vector3.zero;
+        _rigidbody.angularVelocity = Vector3.zero;
+
+        _initialTiltAngle = Mathf.Acos(Vector3.Dot(_faceNormal, _floorNormal));
+        _wobbleStartTime = Time.time;
+        _precessionAxis = _floorNormal;
+    }
+
+    void EulerWobble() {
+        float t = Time.time - _wobbleStartTime;
+        float alpha = _initialTiltAngle * Mathf.Pow(1 - Mathf.Clamp01(t / _wobbleDuration), 0.333f);
+
+        if (alpha < Mathf.Deg2Rad * 0.5f) {
+            //transition into Settled State
+            return;
+        }
+
+        float omega = Mathf.Sqrt(_gravity * Mathf.Cos(alpha) / (_radius * Mathf.Sin(alpha)));
+
+        Quaternion spin = Quaternion.AngleAxis(Mathf.Rad2Deg * omega * Time.fixedDeltaTime, _floorNormal);
+        _precessionAxis = spin * _precessionAxis;
+
+        Vector3 perpAxis = Vector3.Cross(_precessionAxis, Vector3.right);
+        Quaternion tilt = Quaternion.AngleAxis(Mathf.Rad2Deg * alpha, perpAxis);
+        _faceNormal = tilt * _precessionAxis;
+
+        Quaternion deltaRotation = Quaternion.FromToRotation(transform.right, _faceNormal);
+        _rigidbody.MoveRotation(deltaRotation * _rigidbody.rotation);
+    }
+
+    void OnCollisionStay(Collision collision) {
+        foreach (ContactPoint contact in collision.contacts) {
+            _floorNormal = contact.normal;
+        }
     }
 
     void OnCollisionEnter(Collision collision) {

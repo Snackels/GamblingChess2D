@@ -591,6 +591,10 @@ PrefabInstance:
       propertyPath: m_Mass
       value: 0.68
       objectReference: {fileID: 0}
+    - target: {fileID: 8308112177867740059, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
+      propertyPath: m_ImplicitTensor
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1897,12 +1901,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6176f210be57ebc41aad54c584a815b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoinSpawner
-  _coinPrefab: {fileID: 7880288470923921813, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
-  _spawnPoint: {fileID: 800221030}
-  _throwDir: {x: -7.35, y: 1.22, z: 2.43}
-  _throwSpeedRange: {x: 0.5, y: 0}
-  _throwDirVariance: 0.2
-  _impulseAngularVelocity: {x: 0, y: 0, z: 0}
 --- !u!1 &847233608
 GameObject:
   m_ObjectHideFlags: 0
