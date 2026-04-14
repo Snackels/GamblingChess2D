@@ -528,6 +528,10 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4019182088471097136, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
+      propertyPath: _untilGroundedElapse
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4019182088471097136, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
       propertyPath: m_EditorClassIdentifier
       value: Assembly-CSharp::CoinPhysics
       objectReference: {fileID: 0}

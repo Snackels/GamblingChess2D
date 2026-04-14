@@ -140,32 +140,19 @@ public class CoinPhysics : MonoBehaviour {
     }
 
     void EnterEulerWobble() {
-        Debug.Log($"EnterEulerWobble | floorNormal: {_floorNormal} | faceNormal: {_faceNormal}");
+        _initialSpin = Vector3.Dot(_faceNormal, _rigidbody.angularVelocity);
 
-        float dot = Mathf.Clamp(Vector3.Dot(_faceNormal, _floorNormal), -1f, 1f);
-        _initialTiltAngle = Mathf.Acos(Mathf.Abs(dot));
-
-        if (dot < 0f) _faceNormal = -_faceNormal;
-
+        _rigidbody.linearVelocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
 
+        _initialTiltAngle = Mathf.Acos(Vector3.Dot(_faceNormal, _floorNormal));
         _wobbleStartTime = Time.time;
+        _precessionAxis = _floorNormal;
 
-        Vector3 projected = _faceNormal - Vector3.Dot(_faceNormal, _floorNormal) * _floorNormal;
-        if (projected.sqrMagnitude < 0.001f)
-            projected = Vector3.Cross(_floorNormal, Vector3.up);
-        if (projected.sqrMagnitude < 0.001f)
-            projected = Vector3.Cross(_floorNormal, Vector3.right);
-
-        _precessionAxis = projected.normalized;
-
-        Debug.Log($"initialTiltAngle: {Mathf.Rad2Deg * _initialTiltAngle:F2}° | precessionAxis: {_precessionAxis}");
+        _spinDecayElapsedTime = Time.time;
     }
 
     void EulerWobble() {
-        Vector3 velAlongNormal = Vector3.Dot(_rigidbody.linearVelocity, _floorNormal) * _floorNormal;
-        _rigidbody.linearVelocity -= velAlongNormal;
-
         float t = Time.time - _wobbleStartTime;
         float alpha = _initialTiltAngle * Mathf.Pow(1 - Mathf.Clamp01(t / _wobbleDuration), 0.333f);
 
@@ -175,28 +162,20 @@ public class CoinPhysics : MonoBehaviour {
             return;
         }
 
-        float omegaPrecess = Mathf.Sqrt(_gravity * Mathf.Cos(alpha) / (_radius * Mathf.Sin(alpha)));
+        float eulerNumber = 2.71828f;
+        float spinDecay = _initialSpin * Mathf.Pow(eulerNumber, -_mu_roll * _gravity * t / _radius);
 
-        Quaternion spin = Quaternion.AngleAxis(Mathf.Rad2Deg * omegaPrecess * Time.fixedDeltaTime, _floorNormal);
+        float omegaPrecess = Mathf.Sqrt(_gravity * Mathf.Cos(alpha) / (_radius * Mathf.Sin(alpha)));
+        float omega = omegaPrecess + spinDecay;
+
+        Quaternion spin = Quaternion.AngleAxis(Mathf.Rad2Deg * omega * Time.fixedDeltaTime, _floorNormal);
         _precessionAxis = spin * _precessionAxis;
 
-        _precessionAxis = (_precessionAxis - Vector3.Dot(_precessionAxis, _floorNormal) * _floorNormal);
-        if (_precessionAxis.sqrMagnitude < 0.0001f) return;
-        _precessionAxis = _precessionAxis.normalized;
-
-        Vector3 perpAxis = Vector3.Cross(_floorNormal, _precessionAxis);
-        if (perpAxis.sqrMagnitude < 0.0001f) return;
-        perpAxis = perpAxis.normalized;
-
+        Vector3 perpAxis = Vector3.Cross(_floorNormal, _precessionAxis).normalized;
         Quaternion tilt = Quaternion.AngleAxis(Mathf.Rad2Deg * alpha, perpAxis);
-        _faceNormal = (tilt * _precessionAxis).normalized;
-
-        float dotCheck = Vector3.Dot(transform.right.normalized, _faceNormal);
-        if (Mathf.Abs(dotCheck) > 0.9999f) return;
+        _faceNormal = tilt * _precessionAxis;
 
         Quaternion deltaRotation = Quaternion.FromToRotation(transform.right, _faceNormal);
-        if (float.IsNaN(deltaRotation.x)) return;
-
         _rigidbody.MoveRotation(deltaRotation * _rigidbody.rotation);
     }
 
@@ -216,15 +195,9 @@ public class CoinPhysics : MonoBehaviour {
         int groundedFrameCounter = _physicsFrameCounter - _untilGroundedElapse;
         Gravity();
 
-        float dot = Mathf.Clamp(Vector3.Dot(_faceNormal, _floorNormal), -1f, 1f);
-        float tiltAngle = Mathf.Acos(Mathf.Abs(dot)); // abs handles flipped normals
-        float verticalVel = Mathf.Abs(Vector3.Dot(_rigidbody.linearVelocity, _floorNormal));
-
-        Debug.Log($"frameCounter: {groundedFrameCounter} | vertVel: {verticalVel:F4} | tiltAngle: {Mathf.Rad2Deg * tiltAngle:F2}° | floorNormal: {_floorNormal}");
-
         if (groundedFrameCounter > 10
-        && verticalVel < 0.1f
-        && tiltAngle > Mathf.Deg2Rad * 45f) {
+        && Mathf.Abs(Vector3.Dot(_rigidbody.linearVelocity, _floorNormal)) < 0.01f
+        && Mathf.Acos(Vector3.Dot(_faceNormal, _floorNormal)) < Mathf.Deg2Rad * 45f) {
             EnterEulerWobble();
             _currentState = State.EulerWobble;
         }
@@ -234,10 +207,6 @@ public class CoinPhysics : MonoBehaviour {
     #region OnCollisions
 
     void OnCollisionEnter(Collision collision) {
-        _floorNormal = collision.contacts[0].normal;
-
-        if (_currentState == State.EulerWobble || _currentState == State.Settled)
-            return;
 
         if (_currentState == State.AirBorne || _currentState == State.Grounded) {
             _currentState = State.Bouncing;
