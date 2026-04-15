@@ -23,32 +23,24 @@ public class CoinPhysics : MonoBehaviour {
 
     [Header("General Settings")]
     [SerializeField] float _gravity = 9.81f;
-    [SerializeField] float _restitution = 0.6f;
+    [SerializeField] float _restitution = 0.8f;
     [SerializeField] float _friction = 0.4f;
-    [SerializeField] float _maxTiltDelta = 10f;
+    [SerializeField] float _maxTiltDelta = 22f;
     [SerializeField] float _maxAngularVelocity = 50f;
 
-    [Header("Wobble")]
-    [SerializeField] float _wobbleDuration = 1.5f;
-    float _wobbleStartTime;
-    float _initialTiltAngle;
-    float _initialSpin;
-
     [Header("SpinDecay")]
-    [SerializeField] float _mu_roll = 0.003f;
-    float _spinDecayElapsedTime;
+    [SerializeField] float _mu_roll = 0.001f;
 
     [Header("GroundCheckTimer")]
-    [SerializeField] int _untilGroundedElapse;
+    [SerializeField] int _untilGroundedElapse = 500;
+    int _continuousGroundedFrames;
     int _physicsFrameCounter;
 
-    Vector3 _precessionAxis;
 
     enum State {
         AirBorne,
         Bouncing,
         Grounded,
-        EulerWobble,
         Settled
     };
 
@@ -98,9 +90,6 @@ public class CoinPhysics : MonoBehaviour {
             case State.Bouncing:
                 Bouncing();
                 break;
-            case State.EulerWobble:
-                EulerWobble();
-                break;
             case State.Settled:
                 break;
             case State.Grounded:
@@ -139,67 +128,43 @@ public class CoinPhysics : MonoBehaviour {
         }
     }
 
-    void EnterEulerWobble() {
-        _initialSpin = Vector3.Dot(_faceNormal, _rigidbody.angularVelocity);
-
-        _rigidbody.linearVelocity = Vector3.zero;
-        _rigidbody.angularVelocity = Vector3.zero;
-
-        _initialTiltAngle = Mathf.Acos(Vector3.Dot(_faceNormal, _floorNormal));
-        _wobbleStartTime = Time.time;
-        _precessionAxis = _floorNormal;
-
-        _spinDecayElapsedTime = Time.time;
-    }
-
-    void EulerWobble() {
-        float t = Time.time - _wobbleStartTime;
-        float alpha = _initialTiltAngle * Mathf.Pow(1 - Mathf.Clamp01(t / _wobbleDuration), 0.333f);
-
-        if (alpha < Mathf.Deg2Rad * 0.5f) {
-            EnterSettled();
-            _currentState = State.Settled;
-            return;
-        }
-
-        float eulerNumber = 2.71828f;
-        float spinDecay = _initialSpin * Mathf.Pow(eulerNumber, -_mu_roll * _gravity * t / _radius);
-
-        float omegaPrecess = Mathf.Sqrt(_gravity * Mathf.Cos(alpha) / (_radius * Mathf.Sin(alpha)));
-        float omega = omegaPrecess + spinDecay;
-
-        Quaternion spin = Quaternion.AngleAxis(Mathf.Rad2Deg * omega * Time.fixedDeltaTime, _floorNormal);
-        _precessionAxis = spin * _precessionAxis;
-
-        Vector3 perpAxis = Vector3.Cross(_floorNormal, _precessionAxis).normalized;
-        Quaternion tilt = Quaternion.AngleAxis(Mathf.Rad2Deg * alpha, perpAxis);
-        _faceNormal = tilt * _precessionAxis;
-
-        Quaternion deltaRotation = Quaternion.FromToRotation(transform.right, _faceNormal);
-        _rigidbody.MoveRotation(deltaRotation * _rigidbody.rotation);
-    }
-
-    //will implement with sound queue later;
-    void SpinDecay() {
-        float eulerNumber = 2.71828f;
-        float t = Time.time - _spinDecayElapsedTime;
-        float omegaT = _initialSpin * Mathf.Pow(eulerNumber, -_mu_roll * _gravity * t / _radius);
-        _rigidbody.angularVelocity += omegaT * _faceNormal;
-    }
-
     void EnterSettled() {
         _rigidbody.constraints = RigidbodyConstraints.FreezeAll;
     }
 
     void Grounded() {
-        int groundedFrameCounter = _physicsFrameCounter - _untilGroundedElapse;
         Gravity();
 
-        if (groundedFrameCounter > 10
-        && Mathf.Abs(Vector3.Dot(_rigidbody.linearVelocity, _floorNormal)) < 0.01f
-        && Mathf.Acos(Vector3.Dot(_faceNormal, _floorNormal)) < Mathf.Deg2Rad * 45f) {
-            EnterEulerWobble();
-            _currentState = State.EulerWobble;
+        // Keep precession alive on the ground
+        Vector3 omegaSpin = Vector3.Dot(_rigidbody.angularVelocity, _faceNormal) * _faceNormal;
+        Vector3 omegaTilt = _rigidbody.angularVelocity - omegaSpin;
+
+        Vector3 angularMomentum = _I1 * omegaTilt + _I3 * omegaSpin;
+        float omegaN = angularMomentum.magnitude / _I1;
+        Vector3 mHat = angularMomentum.normalized;
+
+        Vector3 dNdt = omegaN * Vector3.Cross(mHat, _faceNormal);
+        _faceNormal = (_faceNormal + dNdt * Time.fixedDeltaTime).normalized;
+
+        Quaternion deltaRotation = Quaternion.FromToRotation(transform.right, _faceNormal);
+        _rigidbody.MoveRotation(deltaRotation * _rigidbody.rotation);
+
+        // Decay angular velocity via rolling friction
+        float spinSpeed = _rigidbody.angularVelocity.magnitude;
+        if (spinSpeed > 0.001f) {
+            float decayRate = _mu_roll * _gravity;
+            _rigidbody.angularVelocity -= _rigidbody.angularVelocity.normalized * decayRate * Time.fixedDeltaTime;
+        }
+
+        // Transition to settled when spin is nearly dead
+        float dot = Mathf.Clamp(Vector3.Dot(_faceNormal, _floorNormal), -1f, 1f);
+        float tiltAngle = Mathf.Acos(Mathf.Abs(dot));
+
+        if (_continuousGroundedFrames > _untilGroundedElapse
+        && spinSpeed < 0.5f
+        && tiltAngle < Mathf.Deg2Rad * 5f) {
+            EnterSettled();
+            _currentState = State.Settled;
         }
     }
 
@@ -273,9 +238,13 @@ public class CoinPhysics : MonoBehaviour {
         foreach (ContactPoint contact in collision.contacts) {
             _floorNormal = contact.normal;
         }
+        if (_currentState == State.Grounded)
+            _continuousGroundedFrames++;
     }
 
     void OnCollisionExit(Collision collision) {
+        _continuousGroundedFrames = 0;
+
         if (_currentState == State.Bouncing)
             _currentState = State.AirBorne;
     }
