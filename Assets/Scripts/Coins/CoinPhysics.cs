@@ -9,8 +9,8 @@ public class CoinPhysics : MonoBehaviour {
 
     Rigidbody _rigidbody;
 
-    float _height;
-    float _radius;
+    [SerializeField] float _radius;
+    [SerializeField] float _height;
 
     Vector3 _faceNormal;
     Vector3 _floorNormal;
@@ -21,16 +21,17 @@ public class CoinPhysics : MonoBehaviour {
     [SerializeField] float _gravity = 9.81f;
     [SerializeField] float _restitution = 0.8f;
     [SerializeField] float _friction = 0.4f;
-    [SerializeField] float _maxTiltDelta = 22f;
+    [SerializeField] float _maxTiltDelta = 21f;
     [SerializeField] float _maxAngularVelocity = 50f;
 
     [Header("SpinDecay")]
     [SerializeField] float _mu_roll = 0.001f;
 
     [Header("GroundCheckTimer")]
-    [SerializeField] int _untilGroundedElapse = 500;
+    [SerializeField] int _settleFrameThreshold = 500;
     int _continuousGroundedFrames;
     int _physicsFrameCounter;
+    int _bouncingEntryFrame;
 
     enum State {
         AirBorne,
@@ -41,9 +42,6 @@ public class CoinPhysics : MonoBehaviour {
 
     State _currentState;
 
-    [SerializeField] CoinInitialization _coinInit;
-    bool _initialized;
-
     #endregion
     #region SetUp
 
@@ -52,21 +50,16 @@ public class CoinPhysics : MonoBehaviour {
     }
 
     void Start() {
-        _radius = _coinInit.Radius;
-        _height = _coinInit.Height;
-
         _rigidbody.maxAngularVelocity = _maxAngularVelocity;
         _rigidbody.useGravity = false;
 
         _faceNormal = transform.right;
 
-        _I1 = _coinInit.I1;
-        _I3 = _coinInit.I3;
+        _I1 = (0.25f * _rigidbody.mass * _radius * _radius) + (1f / 12f * _rigidbody.mass * _height * _height);
+        _I3 = 0.5f * _rigidbody.mass * _radius * _radius;
 
         _rigidbody.inertiaTensor = new Vector3(_I1, _I1, _I3);
         _rigidbody.inertiaTensorRotation = Quaternion.identity;
-
-        _initialized = true;
 
         Debug.Log($"radius: {_radius:F4} | height: {_height:F4} | mass: {_rigidbody.mass:F4} | I1: {_I1:F6} | I3: {_I3:F6}");
         Debug.Log($"POST-START tensor: {_rigidbody.inertiaTensor}");
@@ -76,7 +69,6 @@ public class CoinPhysics : MonoBehaviour {
     #region Update
 
     void FixedUpdate() {
-        if (!_initialized) return;
         _physicsFrameCounter++;
         UpdateState();
         Debug.Log(_currentState);
@@ -119,13 +111,11 @@ public class CoinPhysics : MonoBehaviour {
     }
 
     void Bouncing() {
-        int groundFrameCounter = _physicsFrameCounter - _untilGroundedElapse;
+        int groundFrameCounter = _physicsFrameCounter - _settleFrameThreshold;
         Gravity();
 
-        if (groundFrameCounter > 5) {
+        if (_physicsFrameCounter - _bouncingEntryFrame > 5)
             _currentState = State.Grounded;
-            _untilGroundedElapse = _physicsFrameCounter;
-        }
     }
 
     void EnterSettled() {
@@ -160,9 +150,7 @@ public class CoinPhysics : MonoBehaviour {
         float dot = Mathf.Clamp(Vector3.Dot(_faceNormal, _floorNormal), -1f, 1f);
         float tiltAngle = Mathf.Acos(Mathf.Abs(dot));
 
-        if (_continuousGroundedFrames > _untilGroundedElapse
-        && spinSpeed < 0.5f
-        && tiltAngle < Mathf.Deg2Rad * 5f) {
+        if (_continuousGroundedFrames > _settleFrameThreshold && spinSpeed < 0.5f && tiltAngle < Mathf.Deg2Rad * 5f) {
             EnterSettled();
             _currentState = State.Settled;
         }
@@ -172,11 +160,10 @@ public class CoinPhysics : MonoBehaviour {
     #region OnCollisions
 
     void OnCollisionEnter(Collision collision) {
-        if (!_initialized) return;
 
         if (_currentState == State.AirBorne || _currentState == State.Grounded) {
             _currentState = State.Bouncing;
-            _untilGroundedElapse = _physicsFrameCounter;
+            _bouncingEntryFrame = _physicsFrameCounter;
         }
 
         ContactPoint contact = collision.contacts[0];
@@ -236,7 +223,6 @@ public class CoinPhysics : MonoBehaviour {
     }
 
     void OnCollisionStay(Collision collision) {
-        if (!_initialized) return;
 
         foreach (ContactPoint contact in collision.contacts) {
             _floorNormal = contact.normal;
@@ -246,7 +232,6 @@ public class CoinPhysics : MonoBehaviour {
     }
 
     void OnCollisionExit(Collision collision) {
-        if (!_initialized) return;
 
         _continuousGroundedFrames = 0;
 

@@ -1,32 +1,25 @@
 using UnityEngine;
 
 [RequireComponent(typeof(MeshCollider))]
-[RequireComponent(typeof(Rigidbody))]
-public class CoinInitialization : MonoBehaviour {
+public class CalculateCoinGeometry : MonoBehaviour {
 
     public float Radius { get; private set; }
     public float Height { get; private set; }
-
-    public float I1 { get; private set; }
-    public float I3 { get; private set; }
 
     Vector3[] _verts;
     Vector3 _scale;
 
     MeshCollider _meshCollider;
-    Rigidbody _rigidbody;
 
     void Awake() {
         _meshCollider = GetComponent<MeshCollider>();
-        _rigidbody = GetComponent<Rigidbody>();
         _verts = _meshCollider.sharedMesh.vertices;
         _scale = transform.lossyScale;
     }
 
     void Start() {
         DeriveCoinGeometry(_verts, _scale);
-        I1 = (0.25f * _rigidbody.mass * Radius * Radius) + (1f / 12f * _rigidbody.mass * Height * Height);
-        I3 = (0.25f * _rigidbody.mass * Radius * Radius) + (1f / 12f * _rigidbody.mass * Height * Height);
+        Debug.Log("Radius :" + Radius + " Height :" + Height);
     }
 
     void DeriveCoinGeometry(Vector3[] verts, Vector3 scale) {
