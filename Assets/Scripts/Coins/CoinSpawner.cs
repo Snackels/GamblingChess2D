@@ -13,11 +13,11 @@ public class CoinSpawner : MonoBehaviour {
 
     public void SpawnCoin() {
         GameObject spawnObj = Instantiate(_coinPrefab, _spawnPoint.position, _coinPrefab.transform.rotation);
-        // Rigidbody rigidbody = spawnObj.GetComponent<Rigidbody>();
-        // if (rigidbody != null) {
-        //     float speed = Random.Range(_throwSpeedRange.x, _throwSpeedRange.y);
-        //     rigidbody.AddForce(_throwDir.normalized * speed, ForceMode.Impulse);
-        // }
+        Rigidbody rigidbody = spawnObj.GetComponent<Rigidbody>();
+        if (rigidbody != null) {
+            float speed = Random.Range(_throwSpeedRange.x, _throwSpeedRange.y);
+            rigidbody.AddForce(_throwDir.normalized * speed, ForceMode.Impulse);
+        }
     }
 
     void OnDrawGizmos() {

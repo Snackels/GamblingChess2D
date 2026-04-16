@@ -1782,7 +1782,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CoinSpawner
   _coinPrefab: {fileID: 7880288470923921813, guid: 2f8ec6d85ce352f45998303b84d9ce96, type: 3}
   _spawnPoint: {fileID: 800221030}
-  _throwDir: {x: 0, y: 1, z: 1}
+  _throwDir: {x: 0, y: 0, z: 1}
   _throwSpeedRange: {x: 10, y: 25}
   _impulseAngularVelocity: {x: 0, y: 0, z: 0}
 --- !u!1 &847233608
