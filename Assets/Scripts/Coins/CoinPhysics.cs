@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -8,10 +8,6 @@ public class CoinPhysics : MonoBehaviour {
     #region Field
 
     Rigidbody _rigidbody;
-    MeshCollider _meshCollider;
-
-    Vector3[] verts;
-    Vector3 scale;
 
     float _height;
     float _radius;
@@ -36,7 +32,6 @@ public class CoinPhysics : MonoBehaviour {
     int _continuousGroundedFrames;
     int _physicsFrameCounter;
 
-
     enum State {
         AirBorne,
         Bouncing,
@@ -46,37 +41,42 @@ public class CoinPhysics : MonoBehaviour {
 
     State _currentState;
 
+    [SerializeField] CoinInitialization _coinInit;
+    bool _initialized;
+
     #endregion
     #region SetUp
 
     void Awake() {
         _rigidbody = GetComponent<Rigidbody>();
-        _meshCollider = GetComponent<MeshCollider>();
-        verts = _meshCollider.sharedMesh.vertices;
-        scale = transform.lossyScale;
     }
 
     void Start() {
-        DeriveCoinGeometry(verts, scale);
+        _radius = _coinInit.Radius;
+        _height = _coinInit.Height;
 
         _rigidbody.maxAngularVelocity = _maxAngularVelocity;
         _rigidbody.useGravity = false;
 
         _faceNormal = transform.right;
 
-        _I1 = (0.25f * _rigidbody.mass * _radius * _radius) + (1f / 12f * _rigidbody.mass * _height * _height);
-        _I3 = 0.5f * _rigidbody.mass * _radius * _radius;
+        _I1 = _coinInit.I1;
+        _I3 = _coinInit.I3;
 
         _rigidbody.inertiaTensor = new Vector3(_I1, _I1, _I3);
         _rigidbody.inertiaTensorRotation = Quaternion.identity;
 
+        _initialized = true;
+
         Debug.Log($"radius: {_radius:F4} | height: {_height:F4} | mass: {_rigidbody.mass:F4} | I1: {_I1:F6} | I3: {_I3:F6}");
+        Debug.Log($"POST-START tensor: {_rigidbody.inertiaTensor}");
     }
 
     #endregion
     #region Update
 
     void FixedUpdate() {
+        if (!_initialized) return;
         _physicsFrameCounter++;
         UpdateState();
         Debug.Log(_currentState);
@@ -172,6 +172,7 @@ public class CoinPhysics : MonoBehaviour {
     #region OnCollisions
 
     void OnCollisionEnter(Collision collision) {
+        if (!_initialized) return;
 
         if (_currentState == State.AirBorne || _currentState == State.Grounded) {
             _currentState = State.Bouncing;
@@ -235,6 +236,8 @@ public class CoinPhysics : MonoBehaviour {
     }
 
     void OnCollisionStay(Collision collision) {
+        if (!_initialized) return;
+
         foreach (ContactPoint contact in collision.contacts) {
             _floorNormal = contact.normal;
         }
@@ -243,39 +246,12 @@ public class CoinPhysics : MonoBehaviour {
     }
 
     void OnCollisionExit(Collision collision) {
+        if (!_initialized) return;
+
         _continuousGroundedFrames = 0;
 
         if (_currentState == State.Bouncing)
             _currentState = State.AirBorne;
-    }
-
-    #endregion
-    #region CalculateGeometry
-
-    void DeriveCoinGeometry(Vector3[] verts, Vector3 scale) {
-        float minX = float.MaxValue, maxX = float.MinValue;
-        float minY = float.MaxValue, maxY = float.MinValue;
-        float minZ = float.MaxValue, maxZ = float.MinValue;
-
-        foreach (Vector3 vert in verts) {
-            Vector3 sv = Vector3.Scale(vert, scale);
-            if (sv.x < minX) minX = sv.x;
-            if (sv.x > maxX) maxX = sv.x;
-            if (sv.y < minY) minY = sv.y;
-            if (sv.y > maxY) maxY = sv.y;
-            if (sv.z < minZ) minZ = sv.z;
-            if (sv.z > maxZ) maxZ = sv.z;
-        }
-
-        float spanX = maxX - minX;
-        float spanY = maxY - minY;
-        float spanZ = maxZ - minZ;
-
-        if (spanY <= spanX && spanY <= spanZ) _height = spanY;
-        else if (spanX <= spanY && spanX <= spanZ) _height = spanX;
-        else _height = spanZ;
-
-        _radius = Mathf.Max(spanX, spanZ) * 0.5f;
     }
 
     #endregion
